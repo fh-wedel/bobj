@@ -1,0 +1,20 @@
+  obj PROP is
+    sorts P F Th .
+    op P  :  -> P .
+    op _| : P -> P .
+    subsorts P < F .
+    op N_ : F -> F [prec 2].
+    op C__ : F F -> F [prec 15].
+    op Th_ : F -> Th [prec 5].
+    op a1 : F -> Th .
+    op a2 : F F -> Th .
+    op a3 : F F F -> Th .
+    op mp : Th Th -> Th .
+    vars X Y Z : F .
+    eq a1(X) =     Th( C (C N X X) X ).
+    eq a2(X,Y) =   Th( C X (C (N X) Y) ).
+    eq a3(X,Y,Z) = Th( C (C X Y) (C (C Y Z) (C X Z)) ).
+    eq mp(Th(C X Y), Th X) = Th Y .
+  endo
+
+  red mp(a3(C (N P) P, P, P |), a1(P)).

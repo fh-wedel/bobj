@@ -1,0 +1,38 @@
+
+***> good enough
+th CAT-TH is
+  pr QID .
+  sorts Mor? Mor Obj .
+  subsort Mor < Mor? .
+  ops (d0_) (d1_) : Mor? -> Obj .
+  op  _;_ : Mor? Mor? -> Mor? [assoc ] .
+  op id_ : Obj -> Mor .
+  var O : Obj .
+  vars M M0 M1 : Mor? .
+  ***> oops
+  eq d0 id O = O .
+  eq d1 id O = O .
+  eq d0 (M0 ; M1) = d0 M0 .
+  eq d1 (M0 ; M1) = d1 M1 .
+  eq (id d0 M); M = M .
+  eq M ; id d1 M = M .
+  eq M0;M1 = ~setsort~(Mor, M0;M1)
+       if d1 M0 == d0 M1 and ~sort~(M0;M1) == 'Mor? .
+endth
+
+
+open .
+  ops m0 m1 : -> Mor? .
+  ops a b c : -> Obj .
+  eq d0 m0 = a .
+  eq d1 m0 = b .
+  eq d0 m1 = b .
+  eq d1 m1 = c .
+  red m0;m1 .
+close 
+
+
+
+parse d0 m0 ; m3 .
+
+

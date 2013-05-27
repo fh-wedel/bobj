@@ -1,0 +1,31 @@
+
+
+th D-TRIV is 
+  sort Data . 
+end
+
+bth STREAM[X :: D-TRIV] is sort Stream .
+  op head : Stream -> Data .
+  op tail : Stream -> Stream .
+  op _&_  : Data Stream -> Stream .
+  var D : Data .  var S : Stream .
+  eq head(D & S) = D .
+  eq tail(D & S) = S .
+end
+
+bth ZIP[X :: D-TRIV] is pr STREAM[X] .
+  op zip  : Stream Stream -> Stream .
+  vars S S' : Stream .
+  eq head(zip(S,S')) = head(S) .
+  eq tail(zip(S,S')) = zip(S',tail(S)) .
+end
+
+bth BLINK is pr ZIP[NAT] .
+  ops zero one blink : -> Stream .
+  eq head(zero)  = 0 .     eq tail(zero) = zero .
+  eq head(one)   = 1 .     eq tail(one)  = one .
+  eq head(blink) = 0 .     eq head(tail(blink)) = 1 .
+  eq tail(tail(blink)) = blink .
+end
+
+cred  blink == zip(zero, one) .

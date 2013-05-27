@@ -1,0 +1,65 @@
+*** set include BOOL off .
+obj PROPC is ex TRUTH .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 2] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 3] .
+  vars p q r : Bool .
+  eq p and false = false .
+  eq p and true = p .
+  eq p and p = p .
+  eq p xor false = p .
+  eq p xor p = false .
+  eq p and (q xor r) = (p and q) xor (p and r).
+
+  op _or_ : Bool Bool -> Bool [assoc comm prec 7] .
+  op not_ : Bool -> Bool [prec 1] .
+  op _implies_ : Bool Bool -> Bool [prec 9] .
+  op _iff_ : Bool Bool -> Bool [assoc prec 11] .
+  eq p or q = (p and q) xor p xor q .
+  eq not p = p xor true .
+  eq p implies q = (p and q) xor p xor true .
+  eq p iff q = p xor q xor true .
+endo
+
+obj BEH is ex PROPC .
+  ops i1 i2 p1 o : -> Bool .
+  cq p1 = false if i1 .
+  cq p1 = true  if not i1 .
+  cq o = i1 if not i2 .
+  cq o = p1 if i2 .
+  cq o = i2 if not i1 .
+  cq o = i2 if p1 .
+endo
+
+open BEH .  ***> what we want to show:
+red p1 iff not i1 .
+red o  iff i1 xor i2 .
+red p1 .
+red o .
+close
+
+***> use case analysis:
+open BEH .
+eq i1 = true .
+eq i2 = true .
+red p1 iff not i1 .
+red o  iff i1 xor i2 .
+close
+open BEH .
+eq i1 = false .
+eq i2 = true .
+red p1 iff not i1 .
+red o  iff i1 xor i2 .
+close
+open BEH .
+eq i1 = true .
+eq i2 = false .
+red p1 iff not i1 .
+red o  iff i1 xor i2 .
+close
+open BEH .
+eq i1 = false .
+eq i2 = false .
+red p1 iff not i1 .
+red o  iff i1 xor i2 .
+close
+

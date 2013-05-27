@@ -1,0 +1,39 @@
+obj TERM is
+  sort Nat .
+  op 0 : -> Nat .
+  op s_ : Nat -> Nat .
+  op _+_ : Nat Nat -> Nat .
+  vars M N : Nat .
+  eq 0 + N = N .
+  eq (s M) + N = s(M + N) .
+  ops x y z : -> Nat .
+endo
+
+
+th NATF0 is pr TERM .
+  op a : -> Nat .
+endth
+
+
+obj GOAL[A :: NATF0] is pr TERM .
+  let goal = (a +(y + z)) == ((a + y)+ z) .
+endo
+
+
+obj HYP[A :: NATF0] is pr TERM .
+  eq a +(y + z) = (a + y)+ z .
+endo
+
+
+make IND is
+   (GOAL * (op goal to base))[ (0).TERM ] + 
+   HYP[view to TERM is op a to x . endv ] +
+   (GOAL * (op goal to step))[view to TERM is op a to s x . endv]
+endm
+
+red base and step . ***> should be: true 
+
+
+
+
+

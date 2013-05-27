@@ -1,0 +1,91 @@
+*** fixpoint exercise (7.9 in Stansifer, page 261)
+
+obj LIST[X :: TRIV] is sort List .
+  subsort Elt < List .
+  op nil : -> List .
+  op __ : List List -> List [assoc id: nil].
+  op _in_ : Elt List -> Bool .
+  vars E E' : Elt .  var L : List .
+  eq E in nil = false .
+  eq E in E' = E == E' .
+  eq E in (E' L) = E == E' or E in L .
+endo  
+
+obj VAR is sorts Lxp Var .
+  subsort Var < Lxp .
+  ops a b c d e f g h i j k l m n o p q r s t u v w x y z : -> Var .
+  ops ERROR : -> Lxp .
+  ops ERROR1 NOT-VAR-ERROR FREE-ERROR : Var -> Lxp .
+  pr LIST[Lxp].
+  op var_ : Lxp -> Bool .
+  var M : Lxp .
+  eq var(M) = M in (a b c d e f g u v w x y z).
+endo
+
+obj LAMBDA is pr VAR .
+  op .\_._ : Var Lxp -> Lxp [prec 2].
+  op __ : Lxp Lxp -> Lxp . *** [ gather (E e) ].
+      *** could have been __, but [__] makes i easier to read expressions
+  vars X Y Z : Var .  vars L M N : Lxp .   
+
+  op _free in_  : Var Lxp -> Bool .
+  eq X  free in Y = X == Y .
+  eq X  free in (.\ X . M) = false .
+  cq X  free in (.\ Y . M) = X free in M  if X =/= Y .
+  eq X  free in (M N) = X  free in M or X  free in N .
+
+  op sub_for_in_ : Lxp Var Lxp -> Lxp .
+  eq sub L for Y in Y = L .
+  cq sub L for Y in Z = Z  if Y =/= Z .
+  cq sub L for Y in (.\ Y . M) = (.\ L .(sub L for Y in M)) if var L .
+  cq sub L for Y in (.\ Y . M) = NOT-VAR-ERROR(L)  if not var L .
+  cq sub L for Y in (.\ Z . M) = (.\ Z .(sub L for Y in M)) if Y =/= Z .
+  eq sub L for Y in (M N) = ((sub L for Y in M) (sub L for Y in N)) .
+endo
+
+obj ALPHA is pr LAMBDA .
+  op alpha_for_in_ : Var Var Lxp -> Lxp .
+  vars-of .
+  cq alpha Y for X in(.\ X . M) = (.\ Y .(sub Y for X in M)) if not Y free in M .
+  cq alpha Y for X in(.\ Z . M) = FREE-ERROR(Y) if Y free in M or X =/= Z .
+  eq alpha Y for X in Z = ERROR1(Y) .
+  eq alpha Y for X in (M N) = ERROR .
+endo
+
+obj BETA is pr ALPHA .
+  vars-of .
+  cq ((.\ X . M) N) = sub N for X in M if not X free in N .
+  cq ((.\ X . X) N) = FREE-ERROR(X) if X free in N .
+endo
+
+***> test beta reduction:
+red ((.\ x . x) c).
+red ((.\ x . y) c).
+red ((.\ y .(.\ z .(z y))) c).
+red (((.\ y .(.\ z .(z y))) c) (.\ x . x)) .
+red (((.\ x .(.\ y .(x y))) (.\ z . x)) c).
+red (((.\ x .(.\ y . x)) c) ((.\ z . (f z)) b)).
+red (((.\ x .(.\ y .(x y))) (.\ z . z)) c).
+red ((.\ y .(.\ z .(z y))) (.\ z . (z z))).
+red ((.\ y .(.\ z .(z y))) (.\ z . (y z))).
+red (((.\ x .(.\ y .(.\ x .(x (x y))))) (.\ z . ((f x) z))) (g x)).
+red (((.\ x .(.\ y .(x y))) (.\ z . y)) c).
+
+
+obj BETA-ETA is pr BETA .
+  vars-of .
+  cq ((.\ X . M) X) = M if not X free in M .
+endo
+
+open BETA .  vars-of .
+
+let A = (.\ a .(.\ b .(.\ c .(.\ d .(.\ e .(.\ f .(.\ g .(.\ h .(.\ i .(.\ j
+         .(.\ k .(.\ l .(.\ m .(.\ n .(.\ o .(.\ p .(.\ q .(.\ r .(.\ s .(.\ t
+         .(.\ u .(.\ v .(.\ w .(.\ x .(.\ y .(.\ z . (t h i s i s a
+          f i x e d p o i n t c o m b i n a t o r) )))))))))))))))))))))))))).
+
+let XX = A A A A A A A A A A A A A A A A A A A A A A A A A A .
+
+parse (L (XX L)).
+*** red (L (XX L)).
+close

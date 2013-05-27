@@ -1,0 +1,16 @@
+***> Chapter 9, Second Order Equational Logic (was chapter 10)
+
+*** in /home/goguen/obj/prop/propc
+*** in /home/goguen/tp/nat
+
+  in propc 
+
+  open NAT + PROPC .
+  ops (f0_)(f1_)(f2_) : Nat -> Prop [prec 9] .
+  var T : Nat .
+  eq f1 s T = not f0 T .
+  eq f2 s T = not f1 T .
+  op t : -> Nat .
+  red f2 s s t iff f0 t .
+  close
+

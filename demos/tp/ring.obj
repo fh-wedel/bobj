@@ -1,0 +1,41 @@
+set print with parens on .
+
+th RING is sort R .
+  ops 0 1 : -> R .
+  op _+_ : R R -> R [assoc comm idr: 0 prec 5] .
+  op _*_ : R R -> R [assoc idr: 1 prec 3] .
+  op -_ : R    -> R [prec 1] .
+  vars A B C : R .
+  [ri] eq A + (- A) = 0 .
+  [ld] eq A *(B + C) = A * B + A * C .
+  [rd] eq (B + C) * A = B * A + C * A .
+endth
+
+open .
+ops a b c : -> R .
+*** show rules .
+start a * 0 .
+apply -.11 at top .
+apply -.ri with A = (a * a) at { 1 } .
+apply -.ld with A = a at {1,3} .
+apply .11 at (1 2) .
+apply .ri at top .
+*** show term .
+*** apply red at term .
+close
+
+
+*** set reduce conditions on .
+open .
+   vars-of .
+   ops a b c : -> R .
+   eq A * 0 = 0 .  *** lemma
+   [lc] cq B = C if A * B == A * C and A =/= 0 .
+   eq a * b = 0 .  *** assumption
+
+   start b .
+   apply .lc with C = 0, A = a at top .
+   apply red at top .
+close
+
+q

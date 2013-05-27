@@ -1,0 +1,56 @@
+
+obj TERM is
+   sort Nat .
+   op 0 : -> Nat .
+   op s_ : Nat -> Nat .
+   op _+_ : Nat Nat -> Nat .
+   vars M N : Nat .
+   eq 0 + N = N .
+   eq (s M) + N = s(M + N) .
+   ops x y z : -> Nat .
+   let sx = s x .
+endo
+
+th NATF0 is
+   pr TERM .
+   op a : -> Nat .
+endth
+
+obj PTERM[A :: NATF0] is
+   op w : -> Nat .
+endo
+
+th 2TERM[A :: NATF0] is
+   pr PTERM[A] .
+   ops t1 t2 : -> Nat .
+endth
+
+
+obj GOAL[A :: NATF0, T :: 2TERM[A]] is
+   let goal = t1 == t2 .
+endo
+
+
+obj HYP[A :: NATF0, T :: 2TERM[A]] is
+   eq t1 = t2 .
+endo
+
+
+view ASSOC[A :: NATF0] from 2TERM[A] to PTERM[A] is
+   op t1 to a + (y + z) .
+   op t2 to ((a + y) + z) .
+endv
+
+make IND is
+   GOAL[(0).TERM, ASSOC[(0).TERM]]
+end
+
+
+make IND is
+   (GOAL * (op goal to base))[(0).TERM, ASSOC[(0).TERM]] +
+   HYP[(x).TERM,ASSOC[(x).TERM]] +
+   (GOAL * (op goal to step))[(sx).TERM,ASSOC[(sx).TERM]]
+endm
+
+red base and step . ***> should be: true 
+

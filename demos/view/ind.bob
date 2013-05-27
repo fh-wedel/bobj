@@ -1,0 +1,59 @@
+
+ obj NAT is sort Nat .
+    op 0 : -> Nat .
+    op s_ : Nat -> Nat .
+    op _+_ : Nat Nat -> Nat [ assoc comm prec 40 ] .
+    op _*_ : Nat Nat -> Nat [ assoc comm prec 20 ] .
+    vars M N : Nat .
+    eq 0 + M = M .
+    eq s M + N = s(M + N) .
+    eq 0 * M = 0 .
+    eq s M * N = M * N + N .
+    op sum : Nat -> Nat .
+    var M : Nat .
+    eq sum(0) = 0 .
+    eq sum(s M) = s M + sum(M) .
+  end
+
+
+  th TERM is
+    pr NAT .
+    op x : -> Nat .
+  end
+
+
+  th GOALTERM[ X :: TERM ] is
+     ops l r : -> Nat .
+  end
+
+
+  th SCHEME[ G  :: GOALTERM ] is
+     pr B is G[(0).TERM] .
+     pr H is G[(x).TERM] .
+     pr C is G[(s x).TERM] .
+     let base = l.B == r.B .
+     eq l.H = r.H .
+     let step = l.C == r.C .
+     let proof = base and step .
+  end   
+
+
+  view SUM from GOALTERM to GOALTERM is
+     op l to (sum(x)+sum(x)) .
+     op r to x * s x .
+  end
+
+
+  make SUMPROOF is SCHEME[ SUM ] end 
+
+
+  red proof .
+
+
+  
+
+
+
+
+
+

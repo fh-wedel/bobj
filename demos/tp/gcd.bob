@@ -1,0 +1,113 @@
+obj INT is sorts Int Nat .
+  subsort Nat < Int .
+  ops 0 1 2 : -> Nat .
+  op s_ : Nat -> Nat [prec 1] .
+  ops (s_)(p_) : Int -> Int [prec 1] .
+  op (_+_) : Nat Nat -> Nat [assoc comm prec 3] .
+  op (_+_) : Int Int -> Int [assoc comm prec 3] .
+  op (_*_) : Nat Nat -> Nat [assoc comm prec 2] .
+  op (_*_) : Int Int -> Int [assoc comm prec 2] .
+  op (_-_) : Int Int -> Int [prec 4] .
+  op -_ : Int -> Int [prec 1] .
+  op _>_ : Int Int -> Bool .
+  vars I J K : Int .
+  eq 1 = s 0 .  eq 2 = s 1 .
+  eq s p I = I .
+  eq p s I = I .
+  eq I + 0 = I .
+  eq I + s J = s(I + J) .
+  eq I + p J = p(I + J) .
+  eq I * 0 = 0 .
+  eq I * s J = I * J + I .
+  eq I * p J = I * J - I .
+  eq I * (J + K) = I * J + I * K .
+  eq - 0 = 0 .  
+  eq - - I = I .
+  eq - s I = p - I .
+  eq - p I = s - I .
+  eq I - J = I + - J .
+  eq I + - I = 0 .
+  eq -(I + J) = - I - J .
+  eq I * - J = -(I * J) .
+  eq s I > I = true .
+  eq I > p I = true .
+  eq s I > s J = I > J .
+  vars M N : Nat .
+  eq 0 > M = false .
+  eq s M > 0 = true .
+endo
+
+*** some lemmata
+openr .
+vars-of .
+eq I + J + (- J) = I .
+eq I + J + (- I) = J .
+cq I + J > I = true if I > 0 and J > 0 .
+cq I + J > J = true if I > 0 and J > 0 .
+cq I + J > 0 = true if I > 0 and J > 0 .
+close
+
+obj 2NAT is sorts 2Nat 2Int .
+  pr INT .
+  subsort 2Nat < 2Int .
+  op <_,_> : Nat Nat -> 2Nat [prec 2].
+  op <_,_> : Int Int -> 2Int [prec 2].
+  ops p1 p2 : 2Nat -> Nat [prec 3].
+  ops p1 p2 : 2Int -> Int [prec 3].
+  vars M N : Int .
+  eq p1(< M, N >) = M .
+  eq p2(< M, N >) = N .
+endo
+
+obj GCD is pr 2NAT .
+  op gcd_ : 2Int -> Int .
+  vars M N : Int .
+  eq gcd < 0, N > = N .
+  eq gcd < M, 0 > = M .
+  eq gcd < M, M > = M .
+  cq gcd < M, N > = gcd(< M - N, N >) if M > N and N > 0 .
+  cq gcd < M, N > = gcd(< M, N - M >) if N > M and M > 0 .
+endo
+
+*** to prove P(M,N), in this case that gcd(M,N) = gcd(N,M),
+*** we use the following induction scheme:
+*** base cases: P(m,0), P(0,n)
+*** induction steps: assume P(m,n), then prove P(m+n,n) and P(m,m+n)
+*** for this we may assume m,n>0 without loss of generality
+
+openr GCD .
+ops m n : -> Nat .
+
+*** base cases:
+red gcd < m,0 > == gcd < 0,m > .
+red gcd < 0,n > == gcd < n,0 > .
+
+*** for the induction steps:
+eq m > 0 = true .
+eq n > 0 = true .
+close
+
+
+*** induction step computations:
+open .
+eq  gcd < m, n > = gcd < n, m > .  *** induction hypothesis:
+red gcd < m, m + n > == gcd < m + n, m > .
+red gcd < m, m + n > .
+red gcd < m + n, m > .
+close
+
+open .
+eq  gcd < n, m > = gcd < m, n > .  *** induction hypothesis:
+red gcd < m + n, n > == gcd < n, m + n > .
+red gcd < m + n, n > .
+red gcd < n, m + n > .
+close
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,111 @@
+***> sqrt(2) is irrational (for Chapter 8)
+
+obj META is sorts Sen Type Sign Meta .
+  dfn BType is QID .
+  pr QID .
+  subsort BType < Type .
+  subsort Bool  < Sen Meta .
+
+  op _|=[_]_ : Sen Sign Sen  -> Meta [prec 11].
+  op (_][_:_) : Sign Id Type -> Sign .
+  op _and_ : Meta Meta -> Meta [assoc comm prec 2].
+  op _and_ : Sen  Sen  -> Sen  [assoc comm prec 2].
+  op _or_  : Meta Meta -> Meta [assoc comm prec 7].
+  op _or_  : Sen  Sen  -> Sen  [assoc comm prec 7].
+  op _=>_  : Meta Meta -> Meta [prec 9].
+  op _=>_  : Sen  Sen  -> Sen  [prec 9].
+  op not_  : Meta      -> Meta [prec 1].
+  op not_  : Sen       -> Sen  [prec 1].
+  op (all_:__) : Id Type Sen -> Sen .
+
+  vars A P Q : Sen .  var X : Id .  var T : Type .  var S : Sign .
+  [and] eq A |=[S] (P and Q) = (A |=[S] P) and (A |=[S] Q) .
+  [or]  eq A |=[S] (P or Q)  = (A |=[S] P) or  (A |=[S] Q) .
+  [imp] eq A |=[S] (P => Q)  = (A and P) |=[S] Q .
+  [not] eq A |=[S] (not P)   = (A and P) |=[S] false .
+  [all] eq A |=[S] (all X : T P) = A |=[S][X : T] P .
+endo
+
+obj META2 is pr META .
+  var A A' P Q : Sen .  var S : Sign .
+  [modp]  eq A |=[S]  P      =  (A  |=[S] Q) and (A |=[S] Q => P) .
+  [contd] eq A |=[S]  false  =  (A  |=[S] Q) and (A |=[S] not Q) .
+  [lemma] eq A |=[S]  P      =  (A  |=[S] Q) and (A and Q |=[S] P) .
+  [astr]  eq A |=[S]  P      =  (A' |=[S] P) and (A |=[S] A') .
+endo
+
+obj META3 is pr META2 .
+  vars A P Q R : Sen .  var S : Sign .
+  eq A and A     = A .
+  eq A and true  = A .
+  eq A and false = false .
+  eq A and not A = false .
+  eq A or  false = A .
+  eq A or  true  = true .
+  eq A => true   = true .
+  eq A => false  = not A .
+  eq not not A   = A .
+  eq P |=[S] P   = true .
+  eq false |=[S] P = true .
+  eq (P and Q) |=[S] P = true .
+  eq A and (P => Q) |=[S] R = A and P and Q |=[S] R .
+endo
+
+obj META4 is pr META3 .
+  vars A A' P Q R : Sen .  var X : Id .  var T : BType .  var S : Sign .
+  op (exist_:__) : Id BType Sen -> Sen .
+  eq A and (exist X : T P) |=[S] Q = A and P |=[S][X : T] Q .  
+endo
+
+in propc
+
+obj INT is sorts Int Nat .
+  subsort Nat < Int .
+  ops 0 1 2 : -> Nat .
+  op s_ : Nat -> Nat [prec 1] .
+  ops (s_)(p_) : Int -> Int [prec 1] .
+  op (_+_) : Nat Nat -> Nat [assoc comm prec 3] .
+  op (_+_) : Int Int -> Int [assoc comm prec 3] .
+  op (_*_) : Nat Nat -> Nat [assoc comm prec 2] .
+  op (_*_) : Int Int -> Int [assoc comm prec 2] .
+  op (_-_) : Int Int -> Int [prec 4] .
+  op -_ : Int -> Int [prec 1] .
+  vars I J K : Int .
+  eq 1 = s 0 .
+  eq 2 = s 1 .
+  eq s p I = I .
+  eq p s I = I .
+  eq I + 0 = I .
+  eq I + s J = s(I + J) .
+  eq I + p J = p(I + J) .
+  eq I * 0 = 0 .
+  eq I * s J = I * J + I .
+  eq I * p J = I * J - I .
+  eq I * (J + K) = I * J + I * K .
+  eq - 0 = 0 .  
+  eq - - I = I .
+  eq - s I = p - I .
+  eq - p I = s - I .
+  eq I - J = I + - J .
+  eq I + - I = 0 .
+  eq -(I + J) = - I - J .
+  eq I * - J = -(I * J) .
+endo
+
+open META4 + INT .
+subsort Id < Nat .
+op NAT : -> Sen .
+op NATSIG : -> Sign .
+op eq : Nat Nat -> Sen .
+let P = eq('a * 'a * 2, 'b * 'b).
+
+red NAT |=[NATSIG] not (exist 'a : 'Nat (exist 'b : 'Nat P)).
+
+close
+
+
+
+
+
+
+

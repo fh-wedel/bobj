@@ -1,0 +1,10 @@
+obj NAT is
+  sort Nat .
+  op 0 : -> Nat .
+  op s_ : Nat -> Nat [prec 5].
+  op _+_ : Nat Nat -> Nat .
+  var N M : Nat .
+  eq N + 0 = N .
+  eq N + s M = s(N + M) .
+endo
+

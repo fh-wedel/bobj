@@ -1,0 +1,389 @@
+***> chapter 7, Deduction and Rewriting Modulo Equations
+
+th GROUPLA is sort Elt .
+  op _*_ : Elt Elt -> Elt [assoc] .
+  op e : -> Elt .
+  op _-1 : Elt -> Elt [prec 2] .
+  var A : Elt .
+  [lid]  eq e * A = A .
+  [linv] eq A -1 * A = e .
+endth
+
+open .
+  op a : -> Elt .
+
+  ***> first prove the right inverse law:
+  start a * a -1 .
+  apply -.lid at term .            ***> should be: e * a * a -1
+  apply -.linv with A = (a -1) at [1] .
+                                   ***> should be: a -1 -1 * a -1 * a * a -1
+  apply .linv at [2 .. 3] .        ***> should be: a -1 -1 * e * a -1
+  apply .lid at [2 .. 3] .         ***> should be: a -1 -1 * a -1
+  apply .linv at term .            ***> should be: e
+
+  ***> add the proven equation:
+  [rinv] eq A * A -1 = e .
+
+  ***> now prove the right identity law:
+  start a * e .
+  apply -.linv with A = a at [2] . ***> should be: a * a -1 * a
+  apply .rinv at [1 .. 2] .        ***> should be: e * a
+  apply .lid at term .             ***> should be: a
+close
+
+
+th REL is sort Rel .
+  op I : -> Rel .
+  op _U_ : Rel Rel -> Rel [assoc comm].
+  op _;_ : Rel Rel -> Rel [assoc].
+  vars R R1 R2 : Rel .
+  eq I ; R = R .  eq R ; I = R .
+  eq R ;(R1 U R2) = (R ; R1) U (R ; R2).
+  eq (R1 U R2); R = (R1 ; R) U (R2 ; R).
+endth
+
+open .
+  pr NAT .
+  op _*_ : Rel Nat -> Rel .
+  var R : Rel .  var N : Nat .
+  eq R * 0 = I .
+  eq R * s N = (R * N);(I U R).
+close
+
+open GROUPLA .
+  op a : -> Elt .
+
+  ***> first prove the right inverse law:
+  start a * a -1 .
+  apply -.lid at term .          ***> should be: e * a * a -1
+  apply -.linv with A = (a -1) within term .
+                                 ***> should be: a -1 -1 * a -1 * a * a -1
+  apply reduction within term .  ***> should be: e
+
+  ***> add the proven equation:
+  [rinv] eq A * A -1 = e .
+
+  eq A * e = A .                 ***> add by Kai
+
+  ***> now prove the right identity law:
+  start a * e .
+  apply -.linv with A = a within term .  ***> should be: a * a -1 * a
+  apply reduction within term .          ***> should be: a
+close
+
+
+th RING is sort R .
+  ops 0 1 : -> R .
+  op _+_ : R R -> R [assoc comm idr: 0 prec 5] .
+  op _*_ : R R -> R [assoc idr: 1 prec 3] .
+  op -_ : R    -> R [prec 1] .
+  vars A B C : R .
+  [ri] eq A + (- A) = 0 .
+  [ld] eq A *(B + C) = A * B + A * C .
+  [rd] eq (B + C) * A = B * A + C * A .
+endth
+
+
+open .
+    ops a b c : -> R .
+
+    *** show rules .
+    start a * 0 .
+    apply -.1 at top .                      *** change by Kai 
+    apply -.ri with A = (a * a) at {1} .
+    apply -.ld with A = a at [1 .. 3] .
+    *** apply _.1  at (1 2) .                   *** add by Kai
+    apply red at term .
+close
+
+
+*** set reduce conditions on .
+open .  vars-of .
+    ops a b c : -> R .
+    eq A * 0 = 0 .  *** the lemma
+    [lc] cq B = C if A * B == A * C and A =/= 0 .
+    eq a * b = 0 .  *** the assumption
+    *** show rules .
+    start b .
+    apply .lc with C = 0, A = a at top .
+close
+
+obj NAT is sort Nat .
+    op 0 : -> Nat .
+    op s_ : Nat -> Nat [prec 1] .
+    op _+_ : Nat Nat -> Nat [assoc comm prec 3] .
+    vars M N : Nat .
+    eq M + 0 = M .
+    eq M + s N = s(M + N).
+    op _*_ : Nat Nat -> Nat [assoc comm prec 2] .
+    eq M * 0 = 0 .
+    eq M * s N = M * N + M .
+endo
+
+obj SUM is protecting NAT .
+    op sum : Nat -> Nat .
+    var N : Nat .
+    eq sum(0) = 0 .
+    eq sum(s N) = s N + sum(N) .
+endo
+
+open .
+    ops m n : -> Nat .
+    ***> base case
+    reduce sum(0) + sum(0) == 0 * s 0 .
+    ***> induction step
+    eq sum(n) + sum(n) = n * s n .
+    reduce sum(s n) + sum(s n) == s n * s s n .
+close
+
+  obj NAT3 is sort Nat .
+    op 0 : -> Nat .
+    op s_ : Nat -> Nat [prec 1] .
+    op _+_ : Nat Nat -> Nat [assoc comm prec 3] .
+    vars L M N : Nat .
+    eq M + 0 = M .
+    eq M + s N = s(M + N) .
+    op _*_ : Nat Nat -> Nat [assoc comm prec 2] .
+    eq M * 0 = 0 .
+    eq M * s N = M * N + M .
+    eq L * (M + N) = L * M + L * N .
+  endo
+
+  open .
+    var M : Nat .
+    eq M + M + M = 0 .
+    op x : -> Nat .
+    ***> base case, x = 0
+    red 0 * 0 * 0 == 0 .
+    ***> induction step
+    eq x * x * x = x .
+    red s x * s x * s x == s x .
+  close
+
+  set include BOOL off .
+
+  obj PROPC is protecting TRUTH .
+    op _and_ : Bool Bool -> Bool [assoc comm prec 2] .
+    op _xor_ : Bool Bool -> Bool [assoc comm prec 3] .
+    vars P Q R : Bool .
+    eq P and false = false .
+    eq P and true = P .
+    eq P and P = P .
+    eq P xor false = P .
+    eq P xor P = false .
+    eq P and (Q xor R) = (P and Q) xor (P and R).
+
+    op _or_ : Bool Bool -> Bool [assoc comm prec 7] .
+    op not_ : Bool -> Bool [prec 1] .
+    op _implies_ : Bool Bool -> Bool [prec 9] .
+    op _iff_ : Bool Bool -> Bool [assoc prec 11] .
+    eq P or Q = (P and Q) xor P xor Q .
+    eq not P = P xor true .
+    eq P implies Q = (P and Q) xor P xor true .
+    eq P iff Q = P xor Q xor true .
+  endo
+
+  obj DNF is protecting TRUTH .
+    op _and_ : Bool Bool -> Bool [assoc comm prec 2] .
+    op _or_ : Bool Bool -> Bool [assoc comm prec 3] .
+    op not_ : Bool -> Bool [prec 1] .
+    vars P Q R : Bool .
+    eq P and false = false .
+    eq P and true = P .
+    eq P and P = P .
+    eq P or false = P .
+    eq P or true = true .
+    eq P or P = P .
+    eq P and (Q or R) = (P and Q) or (P and R).
+    op _xor_ : Bool Bool -> Bool [assoc comm prec 7] .
+    op _implies_ : Bool Bool -> Bool [prec 9] .
+    op _iff_ : Bool Bool -> Bool [assoc prec 11] .
+    eq P xor Q = (P and not Q) or (not P and Q).
+    eq P implies Q = not P or Q .
+    eq P iff Q = (P and Q) or (not P and not Q) .
+    eq not false = true .
+    eq not true = false .
+    eq P and not P = false .
+    eq P or not P = true .
+    eq not not P = P .
+    eq not(P and Q) = not P or not Q .
+    eq not(P or Q)  = not P and not Q .
+  endo
+
+***> examples for DNF
+open DNF .
+ops p q r s t : -> Bool .
+red p iff p .
+red p iff q iff r .
+red p xor p .
+red p xor q xor r .
+red p and not p .
+red (p and not q) iff (q and not p).
+red (p xor not p) iff (p or not p).
+red (p and q) xor (p and not q).
+red (p and q) or (p and not q).
+red (p and q) xor (p and not q) xor((not p) and q) xor ((not p) and (not q))
+iff (p and q) or (p and not q) or((not p) and q) or ((not p) and (not q)).
+close
+***> comparison with PROPC:
+open PROPC .
+ops p q r s t : -> Bool .
+red p xor p .
+red p xor q xor r .
+red p and not p .
+red (p and q) xor (p and not q).
+red (p and q) or (p and not q).
+red (p and not q) iff (q and not p).
+red (p xor not p) iff (p or not p).
+red (p and q) xor (p and not q) xor((not p) and q) xor ((not p) and (not q))
+iff (p and q) or (p and not q) or((not p) and q) or ((not p) and (not q)).
+close
+
+  th FADD is extending PROPC .
+    ops i1 i2 cin p1 p2 p3 p4 p5 cout sout : -> Bool .
+    eq p1 = i1 and i2 .
+    eq p2 = i1 and cin .
+    eq p3 = p1 or p2 .
+    eq p4 = cin and i2 .
+    eq p5 = cin xor i2 .
+    eq cout = p3 or p4 .
+    eq sout = i1 xor p5 .
+  endth
+  reduce cout iff (i1 and i2) or (i1 and cin) or (i2 and cin) .
+  reduce sout iff (i1 and i2 and cin) or (i1 and not i2 and not cin) or
+                  (not i1 and i2 and not cin) or (not i1 and not i2 and cin).
+
+  th NOT is extending PROPC .
+    ops i o : -> Bool .
+    cq o = true  if not i .
+    cq o = false if i .
+  endth
+
+  open NOT .  eq i = true .
+    red o iff not i .
+  close
+  open NOT .  eq i = false .
+    red o iff not i .
+  close
+
+  th BEH is ex PROPC .
+    ops i o : -> Bool .
+    eq o = not i .
+  endth
+  open .  eq not i = true .
+    red o == true .
+  close
+  open .  eq i = true .
+    red o == false .
+  close
+
+  th XOR is extending PROPC .
+    ops i1 i2 p1 o : -> Bool .
+    cq p1 = false if i1 .
+    cq p1 = true  if not i1 .
+    cq o = i1 if not i2 .
+    cq o = p1 if i2 .
+    cq o = i2 if not i1 .
+    cq o = i2 if p1 .
+  endth
+
+  open XOR .  eq i1 = false .  eq i2 = true .
+    red p1 iff not i1 .
+    red o  iff i1 xor i2 .
+  close
+  open XOR .  eq i1 = true .  eq i2 = false .
+    red p1 iff not i1 .
+    red o  iff i1 xor i2 .
+  close
+  open XOR .  eq i1 = false .  eq i2 = true .
+    red p1 iff not i1 .
+    red o  iff i1 xor i2 .
+  close
+  open XOR .  eq i1 = false .  eq i2 = false .
+    red p1 iff not i1 .
+    red o  iff i1 xor i2 .
+  close
+
+  th BEH is extending PROPC .
+    ops p1 p2 q : -> Bool .
+    eq p1 = not q .
+    eq p2 = q .
+  endth
+  *** p1 = true if not p2 .
+  open BEH .  eq q = false .
+    reduce p1 iff true .
+  close
+  *** p1 = false if p2 .
+  open BEH .  eq q = true .
+    reduce p1 iff false .
+  close
+  *** p2 = true if not p1 .
+  open BEH .  eq q = true .
+    reduce p2 iff true .
+  close
+  *** p2 = false if p1 .
+  open BEH .  eq q = false .
+    reduce p2 iff false .
+  close
+
+  obj ANDCOMM is sort Bool .
+    ops tt ff : -> Bool .
+    op _&_ : Bool Bool -> Bool [comm] .
+    var X : Bool .
+    eq X & tt = X .
+    eq X & ff = ff .
+  endo
+
+  th BEH is extending PROPC .
+    ops i1 i2 p1 o : -> Bool .
+    eq p1 = not i1 .
+    eq o = i1 xor i2 .
+  endth
+
+
+  *** p1 = false if i1 .
+  open BEH .
+    eq i1 = true .
+    reduce p1 == false .
+  close
+
+  *** p1 = true if not i1 .
+  open BEH .
+    eq i1 = false .
+    reduce p1 == true .
+  close
+
+  *** o = i1 if not i2 .
+  open BEH .
+    eq i2 = false .
+    reduce o iff i1 .
+  close
+
+
+  *** o = p1 if i2 .
+  open BEH .
+    eq i2 = true .
+    reduce o iff p1 .
+  close
+
+
+  *** o = i2 if not i1 .
+  open BEH .
+    eq i1 = false .
+    reduce o iff i2 .
+  close
+
+
+  *** o = i2 if p1 .
+  open BEH .
+    eq i1 = false .
+    reduce o iff i2 .
+  close
+
+
+
+
+
+
+
+

@@ -1,0 +1,88 @@
+
+*** set full trace on
+
+bth REGEXP is sort RegExp .
+  ops nil empty : -> RegExp .
+  op __  : RegExp RegExp -> RegExp [assoc id: nil prec 20] .
+  op _+_ : RegExp RegExp -> RegExp [assoc id: empty comm idem prec 30] .
+  op _*  : RegExp -> RegExp [prec 10] .
+  op nil-in _ : RegExp -> Bool [prec 40] .
+  vars L L' : RegExp .
+  eq empty L = empty .
+  eq nil-in L L'   = nil-in L and nil-in L' .
+  eq nil-in L + L' = nil-in L or  nil-in L' .
+  eq nil-in L*     = true .
+  eq nil-in nil = true .
+  eq nil-in empty  = false .
+end
+
+
+
+bth LANGUAGE is
+  pr REGEXP .
+  sort Letter .  subsort Letter < RegExp .
+
+  op a : -> Letter .
+  eq nil-in a = false .
+
+  var Y : Letter .
+  op a? : RegExp -> Bool .
+  vars L L' : RegExp .  var X : Letter .
+  eq a?(L L')   = a?(L) or nil-in L and a?(L') .
+  eq a?(L + L') = a?(L) or a?(L') .
+  eq a?(L*)     = a?(L) .
+  eq a?(X)      = a == X .
+  eq a?(nil)      = false .
+  eq a?(empty)  = false .
+
+  op -a : RegExp -> RegExp [prec 1] .
+  eq -a(L L')   = -a(L) L' + if (nil-in L) then -a(L') else empty fi .
+  eq -a(L + L') = -a(L) + -a(L') .
+  eq -a(L*)     = -a(L) L* .
+  eq -a(X)      = if a == X then nil else empty fi .
+  eq -a(nil)    = empty .
+  eq -a(empty)  = empty .
+
+  op b : -> Letter .
+  eq nil-in b = false .
+
+  var Y : Letter .
+  op b? : RegExp -> Bool .
+  vars L L' : RegExp .  var X : Letter .
+  eq b?(L L')   = b?(L) or nil-in L and b?(L') .
+  eq b?(L + L') = b?(L) or b?(L') .
+  eq b?(L*)     = b?(L) .
+  eq b?(X)      = b == X .
+  eq b?(nil)      = false .
+  eq b?(empty)  = false .
+
+  op -b : RegExp -> RegExp [prec 1] .
+  eq -b(L L')   = -b(L) L' + if (nil-in L) then -b(L') else empty fi .
+  eq -b(L + L') = -b(L) + -b(L') .
+  eq -b(L*)     = -b(L) L* .
+  eq -b(X)      = if b == X then nil else empty fi .
+  eq -b(nil)    = empty .
+  eq -b(empty)  = empty .
+end
+
+
+cred a* + nil == a* .
+cred aa* + nil == a* .
+cred a*a* == a* .
+cred (a+nil)a* == a* .
+cred (a+nil)* == a* .
+cred a*a == aa* .
+
+cred a(ba)* == (ab)*a .
+cred (a*b)*a* == a*(ba*)* .
+cred (a+b)* == (a*b*)* .
+
+open .
+  op l : -> RegExp .
+***> suppose that L = aL + b
+  eq a?(l) = true .  eq -a(l) = l .
+  eq b?(l) = true .  eq -b(l) = nil .
+  eq nil-in l = false .
+***> then we can prove that
+  cred l == a*b .
+close

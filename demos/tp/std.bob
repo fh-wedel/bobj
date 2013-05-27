@@ -1,0 +1,90 @@
+***> chapter 6, Initial Algebras, Standard Models and Induction
+
+  obj NATP+ is
+    sort Nat .
+    op 0 : -> Nat .
+    op s_ : Nat -> Nat .
+    op _+_ : Nat Nat -> Nat .
+    var N M : Nat .
+    eq N + 0 = N .
+    eq N + s M = s(N + M) .
+  endo
+
+  obj NAT is sort Nat .
+    op 0 : -> Nat .
+    op s_ : Nat -> Nat [prec 1] .
+    op _+_ : Nat Nat -> Nat [prec 3] .
+    vars M N : Nat .
+    eq M + 0 = M .
+    eq M + s N = s(M + N) .
+  endo
+
+  open NAT .
+  ops l m n : -> Nat .
+  ***> base case, n=0: l+(m+0)=(l+m)+0
+  red l + (m + 0) == (l + m) + 0 .
+  ***> induction step
+  eq l + (m + n) = (l + m) + n .
+  red l + (m + s n) == (l + m) + s n .
+  close
+
+  open NAT .
+  ops m n : -> Nat .
+
+  ***> first lemma0: 0 + n = n, by induction on n
+  ***> base for lemma0, n=0
+  red 0 + 0 == 0 .
+  ***> induction step
+  eq 0 + n = n .
+  red 0 + s n == s n .
+  *** thus we can assert
+  eq 0 + N = N .
+
+  ***> show lemma1: s m + n = s(m + n), again by induction on n
+  ***> base for lemma1, n=0
+  red s m + 0 == s(m + 0) .
+  ***> induction step
+  eq s m + n = s(m + n) .
+  red s m + s n == s(m + s n) .
+  *** thus we can assert
+  eq s M + N = s(M + N).
+
+  ***> show m + n = n + m, again by induction on n
+  ***> base case, n=0
+  red m + 0 == 0 + m .
+  ***> induction step
+  eq m + n = n + m .
+  red m + s n == s n + m .
+  close
+
+  obj INT is sort Int .
+    ops (inc_)(dec_) : Int -> Int .
+    op 0 : -> Int .
+    vars X Y : Int .
+    eq inc dec X = X .
+    eq dec inc X = X .
+    op _+_ : Int Int -> Int .
+    eq 0 + Y = Y .
+    eq (inc X)+ Y = inc(X + Y).
+    eq (dec X)+ Y = dec(X + Y).
+  endo
+
+  obj SET is sort Set .
+    pr NAT .
+    op {} : -> Set .
+    op ins : Nat Set -> Set .
+    op _U_ : Set Set -> Set [id: {} ] .
+    vars N N' : Nat .
+    vars S S' : Set .
+    eq ins(N,ins(N',S)) = ins(N',ins(N,S)).
+    eq ins(N,ins(N,S)) = ins(N,S).
+    eq ins(N,S) U S' = ins(N,S U S').
+  endo
+
+  open SET .
+  op s0 : -> Set .
+  red ins(0,{}) .
+  red {} U {} .
+  red ins(0,ins(0,{})) .
+  red ins(0,ins(0,s0)) .
+

@@ -1,0 +1,93 @@
+***> experiments with q qapply
+
+***> left groups
+th GROUPLA is sort Elt .
+  op _*_ : Elt Elt -> Elt [assoc] .
+  op e : -> Elt .
+  op _-1 : Elt -> Elt [prec 2] .
+  var A : Elt .
+  [lid]  eq e * A = A .
+  [linv] eq A -1 * A = e .
+endth
+
+
+open .
+op a : -> Elt .
+***> prove the right inverse law:
+start a * a -1 .
+apply -.lid at term .
+  ***> should be: e * a * a -1
+apply -.linv with A = (a -1)  at [1] .
+  ***> should be: a -1 -1 * a -1 * a * a -1
+apply .linv at [2 .. 3] .
+  ***> should be: a -1 -1 * e * a -1
+apply .lid at [2 .. 3] .
+  ***> should be: a -1 -1 * a -1
+apply .linv at term .
+  ***> should be: e
+
+***> add the proven equation:
+[rinv] eq A * A -1 = e .
+
+***> prove the identity inverse law:
+start a * e .
+apply -.linv with A = a at [2] .
+  ***> should be: a * a -1 * a
+apply .rinv at [1 .. 2] .
+  ***> should be: e * a
+apply .lid at top .  *** vs. term
+  ***> should be: a
+close
+
+***> *** various experiments ***
+openr .
+ops a b c : -> Elt .
+[ab] eq a * b = a .
+close 
+
+***> within??
+open .
+start a * b * e * a * b .
+set print with parens on .
+apply print at term .
+***> note that paren s.t. rightmost term is innermost
+apply .ab within term .
+close
+
+***> within within??
+set print with parens on .
+open .
+start a * b * e * a * b * b .
+apply .ab within term .
+close
+
+***> within within again??
+set print with parens on .
+open .
+start ((a * b) * (a * b)) * ((a * b) * b) .
+apply .ab within term .
+close
+
+***> occurrence notation ok for assoc?
+open .
+start (a * b) * (e * ((a * b) * b)) .
+apply .ab at (2 2 1) .
+apply .ab at (2 2) .
+close
+
+
+***> synonyms for top?
+open .
+start a * a -1 .
+apply -.lid at () .
+  ***> should be: e * a * a -1
+close
+open .
+start a * a -1 .
+  *** apply -.lid at [] .
+  ***> should be: e * a * a -1 but does not work.
+close
+
+
+
+

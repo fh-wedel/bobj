@@ -1,0 +1,28 @@
+set include BOOL off .
+*** set verbose on .
+
+obj MODB is sort S .
+  ops 0 a b : -> S .
+  op _+_ : S S -> S [assoc].
+  var X : S .
+  eq 0 + X = X .
+endo
+
+red (a + 0)+ b .
+
+*** show .
+*** show all rules .
+*** show eqs .
+
+obj MODB is sort S .
+  ops 0 a b : -> S .
+  op _+_ : S S -> S .
+  var X : S .
+  eq 0 + X = X .
+endo
+
+red (a + 0)+ b .
+
+*** show .
+*** show all rules .
+*** show eqs .

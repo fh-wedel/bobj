@@ -1,0 +1,47 @@
+***> Appendix C, Background on Relations, etc.
+
+  th REL is sort Elt . 
+    op _R_ : Elt Elt -> Bool .
+  endth
+
+  th POSET is sort Elt .
+    op _>_ : Elt Elt -> Bool .
+    vars A B C : Elt .
+    eq A > A = false .
+    cq A > C = true if A > B and B > C .
+  endth
+
+  th NAT is sort Nat .
+    op 0 : -> Nat .
+    op s : Nat -> Nat .
+    op _>_ : Nat Nat -> Bool .
+    vars A B : Nat .
+    eq A > A = false .
+    eq 0 > A = false .
+    eq s(A) > 0 = true .
+    eq s(A) > s(B) = A > B .
+  endth
+
+  obj TRCL is
+    pr REL .
+    op _R+_ : Elt Elt -> Bool .
+    vars A B C : Elt .
+    cq A R+ B = true if A R B .
+    cq A R+ C = true if A R B and B R+ C .
+  endo
+
+  obj TRCL[R :: REL] is
+    op _R+_ : Elt Elt -> Bool .
+    vars A B C : Elt .
+    cq A R+ B = true if A R B .
+    cq A R+ C = true if A R B and B R+ C .
+  endo
+
+  th EQV is sort Elt .
+    op _\eqv_ : Elt Elt -> Bool .
+    vars A B C : Elt .
+    eq A \eqv A = true .
+    eq A \eqv B = B \eqv A .
+    cq A \eqv C = true if A \eqv B and B \eqv C .
+  endth
+

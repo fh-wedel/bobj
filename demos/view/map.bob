@@ -1,0 +1,42 @@
+
+obj LIST[X :: TRIV] is
+   sorts List NeList .
+   subsorts Elt < NeList < List .
+   op nil : -> List .
+   op _,_ : List List -> List [assoc id: nil] .
+endo
+
+
+th FUN[X Y :: TRIV] is
+   op f_ : Elt.X -> Elt.Y .
+endth
+
+
+obj MAP[X Y :: TRIV, F :: FUN[ X , Y]] is
+   sort S .
+   pr (LIST * (sort List to List1))[X] .
+   pr (LIST * (sort List to List2))[Y] .
+   op map_ : List1 -> List2 .
+   var E : Elt.X .
+   var L : List1 .
+   eq map nil = nil .
+   eq map (E,L) = (f E),(map L) .
+endo
+
+
+obj DOUBLE is
+   pr NAT .
+   op double_ : Nat -> Nat .
+   var N : Nat .
+   eq double N = N + N .
+endo
+
+
+make MAP-double is
+   MAP[NAT, NAT, view to DOUBLE is op f_ to double_ . endv]
+endm
+
+
+
+
+

@@ -1,0 +1,77 @@
+***> for Chapter 8, First Order Logic: a strong inductive proof
+  obj NAT is
+    sorts Nat NzNat Zero .
+    subsorts Zero NzNat < Nat .
+    op 0 : -> Zero .
+    op s_ : Nat -> NzNat .
+    op p_ : NzNat -> Nat .
+    op _+_ : Nat Nat -> Nat [assoc comm] .
+    op _+_ : NzNat NzNat -> NzNat [assoc comm] .
+    op _*_ : Nat Nat -> Nat [assoc comm].
+    op _*_ : NzNat NzNat -> NzNat [assoc comm].
+    op _>_ : Nat Nat -> Bool .
+    vars N M : Nat .
+    eq p s N = N .
+    eq N + 0 = N .
+    eq (s N) + M = s(N + M) .
+    eq N * 0 = 0 .
+    eq N * (s M) = (N * M) + N .
+    eq 0 > M = false .
+    eq s N > 0 = true . 
+    eq s N > s M = N > M .
+  endo
+
+  openr NAT . let 1 = s 0 . let 2 = s 1 . let 3 = s 2 . let 4 = s 3 .
+  let 5 = s 4 . let 6 = s 5 . let 7 = s 6 . let 8 = s 7 . let 9 = s 8 .
+  let 10 = s 9 . let 11 = s 10 . let 12 = s 11 . let 13 = s 12 . 
+  let 14 = s 13 .  close
+
+openr NAT .
+  op even_ : Nat -> Bool .
+  var N : Nat .
+  eq even   0 = true .
+  eq even s 0 = false .
+  eq even s s N = even N .
+  op div2_ : Nat -> Nat .
+  eq div2 0 = 0 .
+  eq div2 s 0 = 0 .
+  eq div2 s s N = s div2 N .
+close
+
+red even 4 .
+red even 5 .
+red div2 4 .
+red div2 5 .
+
+obj SEQ is pr NAT .
+  op f_ : Nat -> Nat .
+  var N : Nat .
+  eq f 0 = 0 .
+  eq f s 0 = 0 .
+  cq f s N = (3 * f(div2 N)) + 2 if N > 0 .    *** add (...) 
+endo
+
+red f 2 .
+red f 3 .
+red f 4 .
+
+openr SEQ .
+  vars N M : Nat .
+  cq s N > M = true if N > M .
+  cq even(N + M) = true if even N and even M .
+  cq even(N * M) = true if even M .
+  cq N > div2 N = true if N > 0 .
+  op n : -> Nat .
+  eq n > s 0 = true .
+  eq n >   0 = true .
+  cq even f N = true if s n > N .
+close
+
+red even f 2 .
+red even f 3 .
+red even f 4 .
+red even f 5 .
+
+red even f div2 n .
+red f s n .
+red even f s n .

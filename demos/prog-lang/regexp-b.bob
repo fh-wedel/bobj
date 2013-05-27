@@ -1,0 +1,15 @@
+
+obj REG is sort Reg .
+  ops a b : -> Reg .
+  op [_ _] : Reg Reg -> Reg .
+  op _* : Reg -> Reg .
+  op [_+_] : Reg Reg -> Reg .
+endo
+
+parse [[a b] [a b]] .
+parse [[a b] + [a b]] .
+parse [a b]* .
+parse [[([a b]*) [a b]] + [a a]] .
+
+parse [a b] .
+parse [[a b]+[a b]] . 

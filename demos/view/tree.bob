@@ -1,0 +1,41 @@
+obj TERM is
+   pr NAT .
+   sort Tree .
+   op tip_ : Nat -> Tree .
+   op _++_ : Tree Tree -> Tree .
+   op id_ : Tree -> Tree .
+   var N : Nat .
+   vars T U : Tree .
+   eq id tip N = tip N .
+   eq id(T ++ U) = (id T)++(id U) .
+   op y : -> Nat .
+   ops t u : -> Tree .
+endo
+
+
+th TREEF0 is
+   pr TERM .
+   op a : -> Tree .
+endth
+
+
+obj GOAL[A :: TREEF0] is
+   sort X .
+   let goal = (id a == a) .
+endo
+
+
+obj HYP[A :: TREEF0] is
+   eq id a = a .
+endo
+
+
+make IND is
+   (GOAL * (op goal to base))[view to TERM is op a to tip y . endv] +
+   HYP[(t).TERM] +
+   HYP[(u).TERM] +
+   (GOAL * (op goal to step))[view to TERM is op a to t ++ u . endv]
+endm
+
+red base and step .  ***> should be: true
+

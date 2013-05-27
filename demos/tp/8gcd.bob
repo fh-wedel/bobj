@@ -1,0 +1,83 @@
+obj INT is sorts Int Nat .
+  subsort Nat < Int .
+  ops 0 1 2 : -> Nat .
+  op s_ : Nat -> Nat [prec 1] .
+  ops (s_)(p_) : Int -> Int [prec 1] .
+  op (_+_) : Nat Nat -> Nat [assoc comm prec 3] .
+  op (_+_) : Int Int -> Int [assoc comm prec 3] .
+  op (_*_) : Nat Nat -> Nat [assoc comm prec 2] .
+  op (_*_) : Int Int -> Int [assoc comm prec 2] .
+  op (_-_) : Int Int -> Int [prec 4] .
+  op -_ : Int -> Int [prec 1] .
+  op _>_ : Int Int -> Bool .
+  vars I J K : Int .
+  eq 1 = s 0 .  eq 2 = s 1 .
+  eq s p I = I .
+  eq p s I = I .
+  eq I + 0 = I .
+  eq I + s J = s(I + J) .
+  eq I + p J = p(I + J) .
+  eq I * 0 = 0 .
+  eq I * s J = I * J + I .
+  eq I * p J = I * J - I .
+  eq I * (J + K) = I * J + I * K .
+  eq - 0 = 0 .  
+  eq - - I = I .
+  eq - s I = p - I .
+  eq - p I = s - I .
+  eq I - J = I + - J .
+  eq I + - I = 0 .
+  eq -(I + J) = - I - J .
+  eq I * - J = -(I * J) .
+  vars M N : Nat .
+  eq 0 > M = false .
+  eq s M > 0 = true .
+  eq s I > I = true .
+  eq I > p I = true .
+  eq s I > s J = I > J .
+endo
+
+*** some lemmata
+openr .
+vars-of .
+eq (I + J) + - J = I .
+eq (I + J) + - I = J .
+eq M + N > M = true .
+eq M + N > N = true .
+cq I + J > 0 = true if I > 0 and J > 0 .
+close
+
+obj GCD is pr INT .
+  op gcd : Nat Nat -> Int .
+  vars M N : Nat .
+  eq gcd(0,N) = N .
+  eq gcd(M,0) = M .
+  eq gcd(M,M) = M .
+  cq gcd(M,N) = gcd(M - N,N) if M > N and N > 0 .
+  cq gcd(M,N) = gcd(M,N - M) if N > M and M > 0 .
+endo
+
+*** to prove P(M,N) is gcd(M,N)>0 if M>0 or N>0
+*** we can use the following induction scheme:
+*** base case: P(m,0), P(0,n), P(m,m)
+*** induction step: assume P(m,n), then prove P(m+n,n) and P(m,m+n) 
+
+
+open GCD .
+vars-of .
+ops m n : -> Nat .
+eq m > 0 = true .
+eq n > 0 = true .
+
+*** base cases:
+red gcd(m,0) > 0 .
+red gcd(0,n) > 0 .
+red gcd(n,n) > 0 .
+
+*** induction step:
+eq  gcd(m,n) > 0  = true .  *** induction hypothesis:
+red gcd(m + n,n) > 0 .
+red gcd(m,m + n) > 0 .
+
+
+close

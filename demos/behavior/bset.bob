@@ -1,0 +1,42 @@
+
+bth BASICSET is                                
+  sort Set .
+  pr NAT .
+  op empty : -> Set .
+  op _in_  : Nat Set -> Bool .           
+  op add : Nat Set -> Set .
+  vars M N : Nat . var S : Set .
+  eq N in empty = false .
+  eq N in add(M , S) = (N == M) or (N in S).
+endb
+
+
+bth SET is pr BASICSET .
+  op _U_ : Set Set -> Set .
+  op _@_ : Set Set -> Set .
+  op neg : Set -> Set .
+  var N M : Nat .
+  var S1 S2 S3 S4 : Set .
+  eq N in S1 U S2  = (N in S1)  or (N in S2) .
+  eq N in S1 @ S2  = (N in S1) and (N in S2) .
+  eq N in neg(S1)  = not (N in S1) .
+endb
+
+
+cred S1 U S2 == S2 U S1 .
+cred S1 @ S2 == S2 @ S1 .
+cred S1 U S1 == S1 .
+cred S1 @ S1 == S1 .
+cred (S1 U S2) U S3 == S1 U (S2 U S3) .
+cred (S1 @ S2) @ S3 == S1 @ (S2 @ S3) .
+cred S1 U (S2 @ S3) == (S1 U S2) @ (S1 U S3) .
+cred S1 @ (S2 U S3) == (S1 @ S2) U (S1 @ S3) .
+cred neg(S1 U S2) == neg(S1) @ neg(S2) .
+cred neg(S1 @ S2) == neg(S2) U neg(S1) .
+cred neg(neg(S1)) == S1 .
+cred ((S1 U S2) U S3) U S4 == ((S4 U S3) U S2) U S1 .
+
+cred neg(S1 U S2) == neg(S1) U neg(S2) .
+cred S1 U S2 == neg(S1 @ S2) .
+
+

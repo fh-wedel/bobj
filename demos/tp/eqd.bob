@@ -1,0 +1,91 @@
+***> Chapter 4, Equational Deduction
+
+  th GROUPL is sort Elt .
+    op _*_ : Elt Elt -> Elt .      
+    op e : -> Elt .
+    op _-1 : Elt -> Elt [prec 2] .
+    var A B C : Elt .
+    eq e * A = A .
+    eq A -1 * A = e .
+    eq A *(B * C) = (A * B)* C .
+  endth
+
+  th FOO is
+    sorts B A .
+    ops T F : -> B .
+    ops (_&_) (_\lvee_) : B B -> B .
+    op \lneg_ : B -> B [prec 2] .
+    op foo : A -> B .
+    var B : B .
+    var A : A .
+    eq B \lvee \lneg B = T .
+    eq B & \lneg B = F .
+    eq B \lvee B = B .
+    eq B & B = B .
+    eq \lneg foo(A) = foo(A) .
+  endth
+
+  th GROUPL is sort Elt .
+    op _*_ : Elt Elt -> Elt .      
+    op e : -> Elt .
+    op _-1 : Elt -> Elt [prec 2] .
+    var A B C : Elt .
+    eq e * A = A .
+    eq A -1 * A = e .
+    eq A *(B * C) = (A * B)* C .
+  endth
+
+  open .
+  op a : -> Elt .
+  start a * a -1 .
+  apply -.1 at term .
+    ***> should be: e * (a * a -1)
+  apply -.2 with A = (a -1) at (1) .
+    ***> should be: (a -1 -1 * a -1) * (a * a -1)
+  apply .3 at term .
+    ***> should be: ((a -1 -1 * a -1)* a)* a -1
+  apply -.3 at (1) .
+    ***> should be: (a -1 -1 * (a -1 * a)) * a -1
+  apply .2 at (1 2) .
+    ***> should be: (a -1 -1 * e) * a -1
+  apply -.3 at term .
+    ***> should be: a -1 -1 * (e * a -1)
+  apply .1 at (2) .
+    ***> should be: a -1 -1 * a -1
+  apply .2 at term .
+    ***> should be: e
+  close
+
+
+    *** set include BOOL off .
+
+  obj INT is sort Int .
+    ops (inc_)(dec_) : Int -> Int .
+    op 0 : -> Int .
+    vars X Y : Int .
+    eq inc dec X = X .
+    eq dec inc X = X .
+    op _+_ : Int Int -> Int .
+    eq 0 + Y = Y .
+    eq (inc X)+ Y = inc(X + Y).
+    eq (dec X)+ Y = dec(X + Y).
+  endo
+
+  th GROUPD- is sort Elt .
+    op _/_ : Elt Elt -> Elt .      
+    var A B C : Elt .
+    eq A /(B / B) = A .
+    eq (A / A)/(B / C) = C / B .
+    eq (A / C)/(B / C) = A / B .
+  endth
+
+  th GROUPD is sort Elt .
+    op _/_ : Elt Elt -> Elt .      
+    op e : -> Elt .
+    var A B C : Elt .
+    eq A /(B / B) = A .
+    eq (A / A)/(B / C) = C / B .
+    eq (A / C)/(B / C) = A / B .
+    eq (A / A) = e .
+  endth
+

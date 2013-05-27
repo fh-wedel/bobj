@@ -1,0 +1,117 @@
+<html>
+<body bgcolor=antiquewhite>
+
+<center><h1>BOBJ</h1></center><br>
+
+<p>
+<b>Thank You for Using BOBJ</b><br>
+<hr noshade width=30% align=left size=1>
+
+  BOBJ is still in testing, it is provided "as is" and comes with no warranty
+  of any kind. We are sorry that no enough documents are provided in
+  the current stage, but you can check many useful examples from the
+  directory "demos", also you can find some information from the
+  <a href="http://www.cs.ucsd.edu/groups/tatami/bobj">BOBJ homepage</a>.
+  your suggestions are very important to us. Please send your comment to
+  <a href=mailto:goguen@cs.ucsd.edu>Joseph Goguen</a>, and submit your
+  bug report to <a href=mailto:klin@cs.ucsd.edu>Kai Lin</a>.
+  
+
+<p>
+<b>Required Softwares</b><br>
+<hr noshade width=30% align=left size=1>
+
+  BOBJ is 100% pure Java application, and it runs on any platform in which
+  Java2 runtime system is installed. no more software is required.
+
+<p>
+<b>What to download?</b><br>
+<hr noshade width=30% align=left size=1>
+
+  BOBJ has being packaged in two different ways: as a unix compressed archive
+  (<a
+  href="ftp://www.cs.ucsd.edu/pub/grad/klin/bobj0.9.tar.gz">bobj0.9.tar.gz</a>),
+  and as a zip file (<a
+  href="ftp://www.cs.ucsd.edu/pub/grad/klin/bobj0.9.zip">bobj0.9.zip</a>).
+  You can download either one according to uncompress  tools on your machine.
+  
+    
+<p>
+<b>How to Run BOBJ?</b><br>
+<hr noshade width=30% align=left size=1>
+
+<ol>
+  <li> if you save all files in a directory $bobj, you can run bobj by the
+  following command under that directory:
+    <blockquote>
+    in Unix <br>
+       <em>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+           java -jar $bobj/bobj.jar </em></br>
+    in Windows<br>
+       <em>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+           java -jar $bobj\bobj.jar </em></br>
+    </blockquote>
+
+  <li> if you want to run BOBJ from any directory, you can save this command as
+  a shell script or .bat file, and add this script to your PATH.
+
+  For convenience, two scrpts are included in the bin directory, you can edit
+  them and change $bobj to the directory where you install BOBJ.
+</ol>   
+
+
+<p><b>How to Execute Examples</b><br>
+<hr noshade width=30% align=left size=1>
+
+
+   After you start BOBJ, you will see a prompt "BOBJ>" from BOBJ, then you can
+   input BOBJ commands to do your work. Here is a typical procedure of running
+   BOBJ specification:
+
+   <font color=navy>
+   <xmp>
+      [cat:/tmp/bobj] java  -cp /tmp/bobj.jar bobj.BOBJ
+
+                   --- Welcome to BOBJ ---
+                     /|||||||||||||||||\
+      BOBJ version 0.9.127 built: Tue Oct 30 16:06:59 PST 2001
+               University of California, San Diego
+                  Thu Nov 01 17:00:27 PST 2001
+
+      BOBJ> cd demos/view
+      BOBJ> ls      
+      assoc.bob     map.bob       pv.bob        pview.bob     tree.bob       
+      BOBJ> in map
+      ==========================================
+      obj LIST
+      ==========================================
+      th FUN
+      ==========================================
+      obj MAP
+      ==========================================
+      obj DOUBLE
+      ==========================================
+      make MAP-double
+      BOBJ> 
+   </xmp>
+   </font>
+
+   
+<p><b>BOBJ Commands</b><br>
+<hr noshade width=30% align=left size=1>
+
+  Following 4 commands provide you the interface with operating system:
+  <xmp>
+  ls              -- list all files in the current directory
+  pwd             -- show the current directory
+  in <filename>   -- load specified bob file and execute it
+  q               -- quit BOBJ
+  </xmp>
+
+More commands about specification can be found from examples.
+
+
+</body>
+</html>
+
+

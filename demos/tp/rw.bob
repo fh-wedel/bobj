@@ -1,0 +1,349 @@
+***> chapter 5, Rewriting
+
+  obj NATP+ is sort Nat .
+    op 0 : -> Nat .
+    op s_ : Nat -> Nat [prec 2] .
+    op _+_ : Nat Nat -> Nat .
+    var N M : Nat .
+    eq N + 0 = N .
+    eq N + s M = s(N + M) .
+  endo
+
+set trace on .
+
+  red s s 0 + s s 0 .
+  red s(s s 0 + s s s 0)+ 0 .
+
+  set trace off .
+
+set include BOOL off .
+
+  obj ANDNOT is sort Bool .
+    ops true false : -> Bool .
+    op _and_ : Bool Bool -> Bool .
+    op not_ : Bool -> Bool [prec 2].
+    var X : Bool .
+    eq true and X = X .
+    eq false and X = false .
+    eq not true = false .
+    eq not false = true .
+  endo
+
+  red not true and not false .
+  red not (true and not false) .
+  red (not not true and true) and not false .
+
+  red X and not X .
+  red not not X .
+
+set include BOOL on .
+
+  th RMON is
+    sort Elt .
+    op e : -> Elt .
+    op _*_ : Elt Elt -> Elt .
+    vars X Y Z : Elt .
+    eq X * e = X .
+    eq (X * Y)* Z = X *(Y * Z).
+  endth
+
+  obj RNATP+ is sort Nat .
+    op 0 : -> Nat .
+    op s_ : Nat -> Nat [prec 2] .
+    op _+_ : Nat Nat -> Nat .
+    vars X Y Z : Nat .
+    eq 0 + X = X .
+    eq (s X) + Y = s(X + Y) .
+    eq X +(Y + Z) = (X + Y)+ Z .
+  endo
+
+  red  s s 0 + s s s 0  == s(s s 0 + s s 0) .
+
+  th GROUPC is sort Elt .
+    op _*_ : Elt Elt -> Elt .
+    op e : -> Elt .
+    op _-1 : Elt -> Elt [prec 2].
+    var A B C : Elt .
+    eq e * A = A .
+    eq A -1 * A = e .
+    eq A * e = A .
+    eq e -1 = e .
+    eq (A * B)* C = A *(B * C) .
+    eq A -1 -1 = A .
+    eq A * A -1 = e .
+    eq A *(A -1 * B) = B .
+    eq A -1 *(A * B) = B .
+    eq (A * B)-1 = B -1 * A -1 .
+  endth
+
+  open .
+  vars W X Y Z : Elt .
+  red ((W * X)*(Y * Z))-1 .
+  red ((Z -1 * Y -1)* X -1)* W -1 .
+  close
+
+set include BOOL on .
+
+  open .
+  vars W X Y Z : Elt .
+  red ((W * X)*(Y * Z))-1 == ((Z -1 * Y -1)* X -1)* W -1 .
+  close
+
+  open .
+  ops a b c d : -> Elt .
+  red ((a * b)*(c * d))-1 .
+  red ((d -1 * c -1)* b -1)* a -1 .
+  close
+
+  th GROUPC+ is
+    *** inc GROUPC .
+    ex GROUPC .
+    ops a b c d : -> Elt .
+  endth
+  red ((a * b)*(c * d))-1 == ((d -1 * c -1)* b -1)* a -1 .
+
+***> The following is supposed to give parse errors:
+
+  select GROUPC .
+  red ((a * b)*(c * d))-1 == ((d -1 * c -1)* b -1)* a -1 .
+
+set include BOOL off .
+
+  th MONOID is
+    sort Elt .
+    op e : -> Elt .
+    op _*_ : Elt Elt -> Elt .
+    vars X Y Z : Elt .
+    eq X * e = X .
+    eq e * X = X .
+    eq (X * Y)* Z = X *(Y * Z).
+  endth
+
+  obj AND is sort Bool .
+    ops tt ff : -> Bool .
+    op _&_ : Bool Bool -> Bool .
+    var X : Bool .
+    eq X & tt = X .
+    eq tt & X = X .
+    eq X & ff = ff .
+    eq ff & X = ff .
+  endo
+
+set include BOOL on .
+
+  obj NATPH is sort Nat .
+    op 0 : -> Nat .
+    op s_ : Nat -> Nat [prec 2] .
+    op _+_ : Nat Nat -> Nat .
+    op half : Nat -> Nat .
+    var N M : Nat .
+    eq N + 0 = N .
+    eq N + s M = s(N + M) .
+    eq half(0) = 0 .
+    eq half(s 0) = 0 .
+    eq half(s s M) = s half(M) .
+  endo
+
+  obj NATP+*> is sort Nat .
+    ops 0 1 2 : -> Nat .
+    op s_ : Nat -> Nat [prec 1] .
+    eq 1 = s 0 .
+    eq 2 = s 1 .
+    vars L M N : Nat .
+    op _+_ : Nat Nat -> Nat [assoc comm prec 3] .
+    eq M + 0 = M .
+    eq M + s N = s(M + N).
+    op _*_ : Nat Nat -> Nat [assoc comm prec 2] .
+    eq M * 0 = 0 .
+    eq M * s N = M * N + M .
+    eq L * (M + N) = L * M + L * N .
+    op _>_ : Nat Nat -> Bool .
+    eq M > M = false .
+    eq s M > 0 = true .
+    eq s M > M = true .
+    eq 0 > M = false .
+    eq s M > s N = M > N .
+  endo
+
+openr .
+vars-of .
+eq L + M > L + N = M > N .
+cq L * M > L * N = M > N if L > 0 .
+cq s M   > N     = M > N if M > N .
+cq L + M > L     = true  if M > 0 .
+cq M     > 0     = true  if M > s 0 .
+cq L + M + M > s s L = true if M > s 0 .
+
+ops a b c d : -> Nat .
+eq a > s 0 = true .
+eq b > s 0 = true .
+eq c > s 0 = true .
+eq d > s 0 = true .
+close
+
+open .
+eq a > b = true .
+red 2 + a > 2 + b .
+red 2 + a * c > 2 + b * c .
+red 2 + a > 2 + b .
+close
+
+open .
+red 2 + a * 2 > a .
+red 2 + a *(2 + b) > 2 + (2 + a * b) .
+red 2 + 2 > 2 .
+red 2 + (2 + 2) > 2 .
+red 2 + 2 + 2 + a > 2 + 2 + a .
+close
+
+***> Do some more termination proofs (inside comments) here?
+
+  obj COMBL is sort T .
+    op __ : T T -> T [ gather (E e) ].
+    ops S K I : -> T .
+    vars L M N : T .
+    eq K M N = M .
+    eq I M = M .
+    eq S M N L = (M L)(N L).
+  endo
+  open .
+    ops m n p : -> T .
+    red S K K m == I m .
+    red S K S m == I m .
+    red S I I I m == I m .
+    red K m n == S(S(K S)(S(K K)K))(K(S K K)) m n .
+    red S m n p == S(S(K S)(S(K(S(K S)))(S(K(S(K K)))S)))(K(K(S K K))) m n p .
+    red S(K K) m n p == S(S(K S)(S(K K)(S(K S)K)))(K K) m n p .
+    let X = S I .
+    red X X X X m == X(X(X X)) m .
+  close
+
+***> The COMBL exercises (inside comment):
+***> all these are mentioned in Klop's survey
+open COMBL .
+ops x y z : -> T .
+let B = S(K S)K .
+red B x y z == x(y z).
+
+let w = S I I .
+red w x == x x .
+
+op F : -> T .
+let P = w(B F w).
+***> red P == F P . *** fails to terminate!
+close
+
+  obj NATMAX is sort PNat .
+    op 0 : -> PNat .
+    op s_ : PNat -> PNat .
+    op _<=_ : PNat PNat -> Bool .
+    op max : PNat PNat -> PNat .
+    vars N M : PNat .
+    eq N <= 0 = true .
+    eq s N <= 0 = false .
+    eq s N <= s M = N <= M .
+    cq max(N,M) = N if M <= N .
+    cq max(N,M) = M if N <= M .
+  endo
+
+  obj NATMAXPF is sort PNat .  
+    pr NATP+*> .
+    op 0 : -> PNat .
+    op s_ : PNat -> PNat .
+    op _<=_ : PNat PNat -> Bool .
+    op max : PNat PNat -> PNat .
+    op r : PNat -> Nat .
+    op r : Bool -> Nat .
+    vars X Y : PNat .
+    eq r(0) = 1 .
+    eq r(true) = 1 .
+    eq r(false) = 1 .
+    eq r(s X) = s r(X).
+    eq r(X <= Y) = s(r(X) + r(Y)).
+    eq r(max(X,Y)) = s s(r(X) + r(Y)).
+  endo
+
+  openr .  
+  ops x y : -> PNat .
+  vars N M : Nat .
+  eq s(N + M) > N = true .
+  red r(0 <= x) > r(true).
+  red r(s x <= 0) > r(false).
+  red r(s x <= s y) > r(x <= y).
+  red r(max(x,y)) > r(x).
+  red r(max(x,y)) > r(y).
+  close
+
+***> The reductions in the objects CTRS1 and CTRS2 below blow up:
+
+  obj FIBO is pr NATP+ .
+    op f : Nat -> Nat .
+    var N : Nat .
+    eq f(0) = 0 .
+    eq f(s 0) = s 0 .
+    eq f(s s N) = f(s N) + f(N).
+  endo
+
+  obj NATLIST is sorts Nat List .
+    op 0 : -> Nat .
+    op s : Nat -> Nat .
+    op _<_ : Nat Nat -> Bool .
+    op nil : -> List .
+    op _._ : Nat List -> List .
+    *** vars and eqs omitted ...
+  endo
+
+  obj BSORT is pr NATLIST .
+    op sort : List -> List .
+    vars N M : Nat .
+    var L : List .
+    cq sort(N .(M . L)) = sort(M .(N . L)) if M < N .
+  endo
+
+  obj B is sort S .
+    ops 0 1 : -> S .
+    op f : S S S -> S .
+    var X : S .
+    eq f(0,1,X) = f(X,X,X) .
+  endo
+
+  obj A is pr B .
+    op g : S S -> S .
+    vars X Y : S .
+    eq g(X,Y) = X .
+    eq g(X,Y) = Y .
+  endo
+
+  obj NAT is pr NATP+*> .
+    op _-_ : Nat Nat -> Nat [prec 4] .
+    vars I J K : Nat .
+*** eq I * (J + K) = I * J + I * K .
+    eq 0 - I = 0 .
+    eq I - I = 0 .
+    eq I - 0 = I .
+    eq (s I)-(s J)= I - J .
+    ops (_<_)(_>=_) : Nat Nat -> Bool .
+    eq I < J = J > I .
+    eq I >= J = I > J or I == J .
+  endo
+
+  obj GCD is pr NAT .
+    op gcd : Nat Nat -> Nat .
+    vars M N : Nat .
+    eq gcd(M,0) = M .
+    eq gcd(0,N) = N .
+    cq gcd(M,N) = gcd(M - N, N) if M >= N and N > 0 .
+    cq gcd(M,N) = gcd(M, N - M) if N >= M and M > 0 .
+  endo
+
+  obj BTREE is sort BTree .
+    pr NAT .
+    op empty : -> BTree .
+    op make : BTree Nat BTree -> BTree .
+    op insert :     Nat BTree -> BTree .
+    vars T1 T2 T3 :  BTree .  vars N M : Nat .
+    eq insert(M,empty)         = make(empty,M,empty) .
+    cq insert(M,make(T1,N,T2)) = make(insert(M,T1),N,T2)  if N > M .
+    cq insert(M,make(T1,N,T2)) = make(T1,N,insert(M,T2))  if M > N .
+  endo
+

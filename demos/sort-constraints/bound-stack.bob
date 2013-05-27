@@ -1,0 +1,26 @@
+
+dth SUM is
+  pr NAT .
+  op sum : Nat -> Nat .
+  var N : Nat .
+  [sum] eq sum(N) = if (N == 0) then 0 else N + sum(p N) fi .
+end
+
+open .
+   red sum(0) + sum(0) == 0 * (0 + s 0) .
+close
+
+
+open .
+  op n : -> Nat .
+  eq sum(n) + sum(n) = n * s n .
+
+  start sum(s n) + sum(s n) == s n * s s n  .
+  apply .sum at (1 1) .
+  apply .sum at (1 2) .
+  mask .sum .
+  apply red at top .
+
+close 
+
+

@@ -1,0 +1,24 @@
+obj NATEXP is sort Exp .
+  op 0 : -> Exp .
+  op s_ : Exp -> Exp  [prec 10] .
+  op _+_ : Exp Exp -> Exp .
+  op _*_ : Exp Exp -> Exp .
+  ops x y z : -> Exp .
+endo
+
+obj INTL is pr NATEXP .
+  pr NAT .
+  vars E E1 E2 : Exp .
+  op [[_]] : Exp -> Nat .
+  eq [[x]] = 1 .
+  eq [[y]] = 2 .
+  eq [[z]] = 3 .
+  eq [[0]] = 0 .
+  eq [[ (s E) ]] = s [[ E ]] .
+  eq [[ E1 + E2 ]] = [[ E1 ]] + [[ E2 ]] .
+  eq [[ E1 * E2 ]] = [[ E1 ]] * [[ E2 ]] .
+endo
+
+red [[ s(x + y) + z ]] .
+red [[ (x * y) + s s 0 ]] .
+red [[ (s s 0 * x) + s(y * z) ]] . 

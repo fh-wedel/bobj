@@ -1,0 +1,16 @@
+
+obj REG is sort Reg .
+  ops a b : -> Reg .
+  op _ _ : Reg Reg -> Reg      [assoc prec 20] .
+  op _* : Reg -> Reg           [prec 10] .
+  op _+_ : Reg Reg -> Reg      [assoc prec 30] .
+endo
+
+parse (ab)(ab) .
+parse (ab)+(ab) .
+parse (ab)* .
+parse (ab)*(ab)+(aa) .
+parse (ab)+(ab) .
+parse abab + ab + ba .
+parse aa* .
+parse c .

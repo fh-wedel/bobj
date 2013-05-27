@@ -1,0 +1,119 @@
+***> chapter 2, Signature and Algebra
+
+  th AUTOM is
+    sorts Input State Output .
+    op \szero : -> State .
+    op f : Input State -> State .
+    op g : State -> Output .
+  endth
+
+  th GRAPH is 
+    sorts Edge Node .
+    op \prs : Edge -> Node .
+    op \prt : Edge -> Node .
+  endth
+
+  obj NATP is
+    sort Nat .
+    op 0 : -> Nat .
+    op s_ : Nat -> Nat .
+  endo
+
+  obj NATEXP is
+    sort Nat .
+    op 0 : -> Nat .
+    op s_ : Nat -> Nat .
+    op _+_ : Nat Nat -> Nat .
+    op _*_ : Nat Nat -> Nat .
+  endo
+
+  set include BOOL off .
+
+  th OL is
+    sorts Nat Bool .
+    ops 0 1 : -> Nat .
+    ops 0 1 : -> Bool .
+    op s_ : Nat -> Nat .
+    op n_ : Bool -> Bool .
+    op _+_ : Nat Nat -> Nat .
+    op _+_ : Bool Bool -> Bool .
+  endth
+
+  set include BOOL on .
+  
+***> chapter 3, Homomorphism, Equation and Satisfaction
+
+  th SEMIGROUP is
+    sort Elt .
+    op _*_ : Elt Elt -> Elt .
+    vars X Y Z : Elt .
+    eq (X * Y)* Z = X *(Y * Z).
+  endth
+
+  th MONOID is
+    sort Elt .
+    op e : -> Elt .
+    op _*_ : Elt Elt -> Elt .
+    vars X Y Z : Elt .
+    eq X * e = X .
+    eq e * X = X .
+    eq (X * Y)* Z = X *(Y * Z).
+  endth
+
+  th GROUP is
+    sort Elt .
+    op e : -> Elt .
+    op _\inv : Elt -> Elt .
+    op _*_ : Elt Elt -> Elt .
+    vars X Y Z : Elt .
+    eq X * e = X .
+    eq X *(X \inv) = e .
+    eq (X * Y)* Z = X *(Y * Z).
+  endth
+
+  obj INT is
+    sort Int .
+    op 0  : -> Int .
+    op s_ : Int -> Int .
+    op p_ : Int -> Int .
+    var I : Int .
+    eq s p I = I .
+    eq p s I = I .
+  endo
+
+  obj INT is
+    sort Int .
+    op 0  : -> Int .
+    op s_ : Int -> Int .
+    op p_ : Int -> Int .
+    op -_ : Int -> Int .
+    op _+_ : Int Int -> Int .
+    vars I J : Int .
+    eq s p I = I .
+    eq p s I = I .
+    eq - 0 = 0 .
+    eq - s I = p - I .
+    eq - p I = s - I .
+    eq I + 0 = I .
+    eq I + s J = s(I + J).
+    eq I + p J = p(I + J).
+  endo
+
+  obj 2NAT is sort 2Nat .
+    op 0 : -> 2Nat .
+    ops (s1_) (s2_) : 2Nat -> 2Nat .
+    var P : 2Nat .
+    eq s1 s2 P = s2 s1 P .
+  endo
+
+  th GROUPL is
+    sort Elt .
+    op e : -> Elt .
+    op _\inv : Elt -> Elt .
+    op _*_ : Elt Elt -> Elt .
+    vars X Y Z : Elt .
+    eq e * X = X .
+    eq (X \inv) * X = e .
+    eq X *(Y * Z) = (X * Y)* Z .
+  endth
+

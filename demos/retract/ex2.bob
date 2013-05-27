@@ -1,0 +1,290 @@
+
+
+  ***> file: ~goguen/sd/pa/ftp97.tex
+  *** set show retracts on .
+
+  th AUTOM is
+    sorts Input State Output .
+    op s0 : -> State .
+    op f : Input State -> State .
+    op g : State -> Output .
+  endth
+
+  obj PNAT is sort Nat .
+    op 0 : -> Nat .
+    op s_  : Nat -> Nat [prec 2].
+    op _+_ : Nat Nat -> Nat .
+    op _*_ : Nat Nat -> Nat .
+    op _<=_ : Nat Nat -> Bool .
+    vars N M : Nat .
+    eq 0 + N = N .
+    eq (s N) + M = s(N + M) .
+    eq 0 * N = 0 .
+    eq (s N) * M = (N * M) + M .
+    eq N <= 0 = N == 0 .
+    eq 0 <= N = true .
+    eq (s N) <= (s M) = N <= M .
+  endo
+
+  obj STACK is sorts Stack NeStack .
+    pr NAT .
+    subsort NeStack < Stack .
+    op empty : -> Stack .
+    op push : Nat Stack -> NeStack .
+    op pop_ : NeStack -> Stack .
+    op top_ : NeStack -> Nat .
+    var N : Nat . var S : Stack .
+    eq pop push(N,S) = S .
+    eq top push(N,S) = N .
+  endo
+
+  ***> hidden test cases for first version of stack:
+  red top pop push(7,push(3,empty)).
+  red top empty .
+  red pop empty .
+  red push(1, pop empty).
+
+  obj FOO is
+    sorts S S? .
+    subsort S < S? .
+    op f : S -> S .
+    op elt : -> S .
+    op err : -> S? .
+    var X : S .
+    eq f(X) = elt .
+  endo
+  red f(err) .
+
+  ***> hidden solution to exercise:
+  obj FOO is
+    sorts S S? .
+    subsort S < S? .
+    op f : S? -> S? .
+    op elt : -> S .
+    op err : -> S? .
+    var X : S .
+    eq f(X) = elt .
+  endo
+
+  red f(err) .
+
+  obj STACK is sorts Stack Stack? Nat? .
+    pr NAT .
+    subsort Stack < Stack? .
+    subsort Nat < Nat? .
+    op empty : -> Stack .
+    op push : Nat Stack -> Stack .
+    op push : Nat? Stack? -> Stack? .
+    op pop_ : Stack -> Stack? .
+    op top_ : Stack -> Nat? .
+    var N : Nat . var S : Stack .
+    eq pop push(N,S) = S .
+    eq top push(N,S) = N .
+  endo
+
+  show time .
+
+  ***> hidden test cases for second version of stack:
+  red top pop push(7,push(3,empty)).
+  red top empty .
+  red pop empty .
+  red push(1, pop empty).
+
+  show time .
+  show rules .
+
+  eof 
+
+  obj PNATM is pr PNAT .
+    sorts Nat? Bool? .
+    subsort Nat < Nat? .
+    subsort Bool < Bool? .
+    op s_  : Nat? -> Nat? [prec 2].
+    op _+_ : Nat? Nat? -> Nat? .
+    op _*_ : Nat? Nat? -> Nat? .
+    op _<=_ : Nat? Nat? -> Bool? .
+    op _-_ : Nat Nat -> Nat? .
+    vars N M : Nat .
+    eq N - 0 = N .
+    cq s N - s M = N - M if M <= N .
+  endo
+
+  open .
+  op [_] : Nat -> Nat .
+  var X : Nat .  
+  eq [X] = X .
+  red s 0 - s s 0 .
+  red 0 *(s 0 - s s 0) .
+  red [s s 0 - s 0] .
+  red [s 0 - s s 0] .
+  close
+
+  obj SETUP is pr PNATM .  *** constants plus lemmas
+    ops l m n : -> Nat .
+    vars L M N : Nat . var E : Nat? .
+    eq N - N = 0 .
+    cq s N - M = s(N - M) if M <= N .
+    eq (L + M) - L = M .
+    cq M <= N - L = true if L + M <= N .
+    eq r:Nat?>Nat(s E) = s r:Nat?>Nat(E) .
+    cq s(r:Nat?>Nat(E) - N) = (s r:Nat?>Nat(E)) - N if N <= E .
+  endo
+
+
+  open .  *** base case
+    eq n = 0 .
+    *** and because l + m <= 0 = true, we have
+    eq l = 0 .  eq m = 0 .
+    red n -(l + m) == (n - l) - m .
+  close
+
+  openr .  *** induction step
+    vars-of .
+    cq n - (L + M) = (n - L) - M if L + M <= n . *** induction hypothesis
+    eq l + m <= s n = true .
+  close
+
+
+  open .  ***> first case:
+    eq l + m <= n = true  .  *** thus:
+    eq l <= n = true .
+    red s n - (l + m) == (s n - l) - m .
+  close
+
+
+  open .  ***> second case:
+    eq s n = l + m .
+    red s n - (l + m) == (s n - l) - m .
+  close
+
+
+  obj OKP is pr PNATM .
+    op ok_ : Nat? -> Bool .
+    var X : Nat? .
+    eq ok X = X == r:Nat?>Nat(X).
+  endo
+
+
+  ***> hidden test cases for ok:
+  red ok 0 .
+  red ok s 0 .
+  red ok(s 0 - 0).
+  red ok(0 - s 0).
+  red ok(s 0 - s 0).
+  red ok(s s 0 - s 0).
+  red ok(s 0 - s s 0).
+  red ok(s s 0 - s s 0).
+
+  obj ONE is
+    sorts S S' .
+    op a : -> S .
+    op f : S' -> S' .
+  endo
+
+  obj TWO is
+    sorts S S' .
+    op a : -> S .
+    op f : S  -> S .
+    op f : S' -> S' .
+    eq f(a) = a .
+  endo
+
+  obj LIST[X :: TRIV] is sorts List NeList .
+    subsorts Elt < NeList < List .
+    op nil : -> List .
+    op __ : List List -> List [id: nil assoc ] .
+    op __ : NeList List -> NeList [assoc] .
+    op head_ : NeList -> Elt .
+    op tail_ : NeList -> List .
+    var X : Elt .  var L : List .
+    eq head (X L) = X .
+    eq tail (X L) = L .
+  endo
+
+  th FN is sort S .
+    op f : S -> S .
+  endth
+
+  obj MAP[F :: FN] is pr LIST[F] .
+    op map : List -> List .
+    var X : S .  var L : List .
+    eq map(nil) = nil .
+    eq map(X L) = f(X) map(L) .  
+  endo
+
+  obj FNS is pr INT .
+    ops (_+1)(sq_)(dbl_) : Int -> Int .
+    var N : Int .
+    eq N +1 = N + 1 .
+    eq sq N = N * N .
+    eq dbl N = N + N .
+  endo
+
+  make MAP+1 is MAP[(_+1).FNS] endm
+  red map(nil).                           ***> should be: nil
+  red map(0 1 -2 3).                      ***> should be: 1 2 -1 4
+  red in MAP[(sq_).FNS] : map(0 1 -2 3).  ***> should be: 0 1 4 9
+  red in MAP[(dbl_).FNS] : map(0 1 -2 3). ***> should be: 0 2 -4 6
+
+
+  obj 2[F :: FN] is
+    op xx : S -> S .
+    var X : S .
+    eq xx(X) = f(f(X)) .
+  endo
+
+  red in 2[(sq_).FNS] : xx(3).                 ***> should be: 81
+  red xx(4).                                   ***> should be: 256
+  red in 2[(dbl_).FNS] : xx(3).                ***> should be: 12
+  red in 2[2[(sq_).FNS]*(op xx to f)] : xx(2). ***> should be: 65536
+  red xx(3).                                   ***> should be: 43046721
+
+  obj SETUP is pr PNATM .  *** constants plus lemmas
+    ops l m n : -> Nat .
+    vars L M N : Nat .
+    eq M <= M = true .
+  endo
+  open .  *** base case
+    eq n = 0 .
+    red n - n == 0 .
+  close
+  open .  *** induction step
+    vars-of .
+    cq M - M = 0 if M <= n . *** induction hypothesis
+    eq m <= n = true .
+    red (s m) - s m == 0 .
+  close
+
+  obj SETUP is pr PNATM .  *** constants plus lemmas
+    ops l m n : -> Nat .
+    vars L M N : Nat . var E : Nat? .
+    eq M <= M = true .
+    eq M - M = 0 .
+    cq s N - M = s(N - M) if M <= N .
+    eq (N + M) - N = M .
+    cq N <= s E = true if N <= E .
+  endo
+
+  open .  *** base case
+    eq n = 0 .
+    *** and because l + m <= 0 = true, we have
+    eq l = 0 .  eq m = 0 .
+    red m <= n - l .
+  close
+
+  openr .  *** induction step
+    vars L M N : Nat .
+    cq M <= n - L = true if L + M <= n . *** induction hypothesis
+    eq l + m <= s n = true .
+  close
+  open .  *** first case:
+    eq l + m <= n = true . *** thus:
+    eq l <= n = true .
+    red m <= s n - l .
+  close
+  open .  *** second case:
+    eq s n = l + m .
+    red m <= s n - l .
+  close
+
+

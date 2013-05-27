@@ -1,0 +1,68 @@
+
+
+obj NAT is 
+ sort Nat .
+ op 0 : -> Nat .
+ op s_ : Nat -> Nat .
+ op _<_ : Nat Nat -> Bool .
+ var N M : Nat .
+ eq N < 0 = false .
+ eq 0 < s N = true .
+ eq s N < s M = N < M .
+endo
+
+
+*** define binary search tree 
+
+obj BINTREE is
+ pr NAT .
+ sort BINTree .
+ op empty : -> BINTree .
+ op make : BINTree Nat BINTree -> BINTree .
+ op insert : Nat BINTree -> BINTree .
+ var T1 T2 T3 :  BINTree .
+ var N M : Nat .
+ cq insert(M, make(T1,N,T2)) = make(insert(M,T1), N, T2) if M < N .
+ cq insert(M, make(T1,N,T2)) = make(T1,N, insert(M,T2)) if N < M .
+ eq insert(M,empty) = make(empty,M,empty) .
+
+endo
+
+
+*** add two new operations:
+*** max : find the maximum natural number in the tree
+*** succ(N,Tree) : find the successor of N in Tree.
+
+obj BINTREE+ is
+ pr BINTREE .
+ op max : BINTree -> Nat .
+ op succ : Nat BINTree -> Nat .
+ var T1 T2 T3 :  BINTree .
+ var N M : Nat .
+ eq max( make(T1, N, make(T2, M, T3)))  = max(make(T2,M,T3)) .
+ eq max(make(T1,N,empty)) = N .
+ cq succ(M, make(T1,N,T2)) = succ(N,T2) if N < M  or M == N .
+ cq succ(M, make(T1,N,T2)) = N if M == max(T1) .
+ cq succ(M, make(T1,N,T2)) = succ(M,T1) if M < max(T1) .
+endo
+
+
+
+*** add a new operation:
+*** del: delete a natural number from the tree.
+
+obj BINTREE++ is
+  pr BINTREE+ .
+  op del : Nat BINTree -> BINTree .
+  var T1 T2 T3 :  BINTree .
+  var N M : Nat .
+  eq del(N, empty) = empty .
+  cq del(N, make(T1,M,T2)) =  make(del(N,T1),M,T2)  if N < M .
+  cq del(N, make(T1,M,T2)) =  make(T1, M, del(N,T2)) if M < N .
+  eq del(N, make(empty,N,T2)) = T2 .
+  eq del(N, make(T1,N,empty)) = T1 .
+  eq del(N, make(empty,N,empty)) = empty .
+  cq del(N, make(T1, N, T2)) = make(T1, succ(N,T2), del(succ(N,T2), T2)) 
+                       if T1 =/= empty and T2 =/= empty .
+endo
+

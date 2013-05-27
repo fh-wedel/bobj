@@ -1,0 +1,56 @@
+
+***> implementing stack with pointer and array
+set trace on
+
+th DATA is
+  sort Data .
+end
+
+bth ARR[X :: DATA]  is sort Arr .  pr NAT .
+  op nil : -> Arr .
+  op put : Data  Nat Arr -> Arr .
+  op _[_] : Arr Nat -> Data  .
+  vars I J : Nat .  var A : Arr . var D : Data .
+  eq nil [I] = 0 .
+  cq put(D, I, A) [J] = D if eq(I, J) .
+  cq put(D, I, A) [J] = A [J] if not eq(I, J) .
+end
+
+
+bth STACK[X :: DATA] is pr ( NAT || ARR[X] ) * (sort Tuple to Stack) .
+  op empty : -> Stack .
+  op push : Data Stack -> Stack [ncong].
+  op top_ : Stack -> Data .
+  op pop_ : Stack -> Stack .
+  vars I J : Nat . var A : Arr .  var D : Data .
+  eq empty = <0, nil>.
+  eq push(D, <I, A>) = <s I, put(D, I, A)> .
+  eq top <s I, A> = A [I] . 
+  eq top <0, A> = 0 .
+  eq pop <s I, A> =  <I, A> .
+  eq pop <0, A> = <0, A> .
+end
+
+show cobasis .
+
+
+***> lemma by induction on I: <I, put(N, J, A)> = <I, A> if I <= J .
+open .
+  ***> base case: I = 0 
+  cred <0, put(D, J, A)> == <0, A> .
+
+  ***> induction case: assume I = i,  prove I = s i .  
+  ops i j : -> Nat .
+  cq <i, put(D, J, A)> = <i, A> if i <= J .
+  eq i < j   = true .
+  cred <s i, put(D, j, A)> == <s i, A> .
+close
+
+
+bth STL is pr STACK .
+  vars I J : Nat . var A : Arr . var D : Data .
+  cq <I, put(D, J, A)> = <I, A> if I <= J .
+end
+
+red pop push(D, <I, A>) == <I, A> .
+red top push(D, <I, A>) == D .

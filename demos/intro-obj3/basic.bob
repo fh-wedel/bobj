@@ -1,0 +1,1439 @@
+
+obj BITS is
+  sorts Bit Bits .
+  ops 0 1 : -> Bit .
+  op nil : -> Bits .
+  op _._ : Bit Bits -> Bits .
+endo
+
+red 0.1.0.nil .
+red in INT : 1 + 10 div 2 .
+
+
+obj LIST-OF-INT is
+   sort List .
+   protecting INT .
+   subsort Int < List .
+   op __ : Int List -> List .
+   op length_ : List -> Int .
+   var I : Int . var L : List .
+   eq length I = 1 .
+   eq length(I L) = 1 + length L .
+endo
+
+red length(17 (-4 329)) .
+red length I .                ***> should be 1
+red length(I I) .             ***> should be 2
+red length(I (I I)) .         ***> should be 3
+
+
+
+obj STACK-OF-NAT is
+   sorts Stack NeStack .
+   subsort NeStack < Stack .
+   protecting NAT .
+   op empty : -> Stack .
+   op push : Nat Stack -> NeStack .
+   op top_ : NeStack -> Nat .
+   op pop_ : NeStack -> Stack .
+   var X : Nat . var S : Stack .
+   eq top push(X,S) = X .
+   eq pop push(X,S) = S .
+endo
+
+red top push(1,empty) .
+red pop push(1,empty) . 
+red top empty .
+red top pop empty .
+
+
+obj STACK-OF-NAT is
+   sorts Stack Stack? Nat? .
+   subsort Stack < Stack? .
+   protecting NAT .
+   subsort Nat < Nat? .
+   op empty : -> Stack .
+   op push : Nat Stack -> Stack .
+   op push : Nat Stack? -> Stack? .
+   op top_ : Stack -> Nat? .
+   op pop_ : Stack -> Stack? .
+   op topless : -> Nat? .
+   op underflow : -> Stack? .
+   var X : Nat . var S : Stack .
+   eq top push(X,S) = X .
+   eq pop push(X,S) = S .
+   eq top empty = topless .
+   eq pop empty = underflow .
+endo
+
+red top push(1,empty) . ***> should be: 1
+red pop push(1,empty) . ***> should be: empty
+red top empty .         ***> should be: topless
+red pop empty .         ***> should be: underflow
+red top pop empty .     ***> should be: top r:Stack??Stack(underflow)
+
+
+
+obj MORE-PROBLEMS is
+   sorts A B C .
+   subsorts A < B < C .
+   op f : C -> C .
+   ops f h : A -> A .
+   op g : B -> B .
+   op a : -> A .
+   var X : B .
+   eq f(X) = g(X) .
+endo
+
+
+obj LIST-OF-INT1 is
+   sorts List NeList .
+   protecting INT .
+   subsorts Int < NeList < List .
+   op nil : -> List .
+   op __ : List List -> List [assoc id: nil ] .
+   op __ : NeList List -> NeList [assoc id: nil] .
+   op head_ : NeList -> Int .
+   op tail_ : NeList -> List .
+   var I : Int . var L : List .
+   eq head(I L) = I .
+   eq tail(I L) = L .
+endo
+
+red 0 nil 1 nil 3 .
+red head(0 1 3) .          ***> should be: 0
+red tail(0 1 3) .          ***> should be: 1 3
+red tail(nil 0 1 nil 3) .  ***> should be: 1 3
+
+obj T is
+   sort T .
+   op __ : T T -> T [ gather(E e) ] .
+   ops a b c : -> T .
+endo
+
+parse a b c .
+parse (a b) c .
+parse a (b c) .
+
+
+obj PROPC is
+   sort Prop .
+   extending TRUTH .
+   protecting QID .
+   subsorts Id Bool < Prop .
+
+   *** constructors ***
+   op _and_ : Prop Prop -> Prop [assoc comm idem idr: true prec 2] .
+   op _xor_ : Prop Prop -> Prop [assoc comm idr: false prec 3] .
+   vars p q r : Prop .
+   eq p and false = false .
+   eq p xor p = false .
+   eq p and (q xor r) = (p and q) xor (p and r) .
+
+   *** derived operators ***
+   op _or_ : Prop Prop -> Prop [assoc prec 7] .
+   op not_ : Prop -> Prop [prec 1] .
+   op _implies_ : Prop Prop -> Prop [prec 9] .
+   op _iff_ : Prop Prop -> Prop [assoc prec 11] .
+   eq p or q = (p and q) xor p xor q .
+   eq not p = p xor true .
+   eq p implies q = (p and q) xor p xor true .
+   eq p iff q = p xor q xor true .
+endo
+
+red 'a implies 'b iff not 'b implies not 'a . ***> should be: true
+red not('a or 'b) iff not 'a and not 'b .     ***> should be: true
+red 'c or 'c and 'd iff 'c .                  ***> should be: true
+red 'a iff not 'b .                           ***> should be: 'a xor 'b
+red 'a and 'b xor 'c xor 'b and 'a .          ***> should be: 'c
+red 'a iff 'a iff 'a iff 'a .                 ***> should be: true
+red 'a implies 'b and 'c iff ('a implies 'b) and ('a implies 'c) .
+                                              ***> should be: true
+
+obj A is
+   sort S .
+   op f : S -> S .
+   ops a b : -> S .
+   vars X : S .
+   eq f(X) = b .
+endo
+
+
+obj B is
+   protecting A .
+   sort S' .
+   subsorts S' < S .
+   op f : S' -> S' .
+   op a : -> S' .
+endo
+
+red f(a) .
+
+
+th TRIV is
+   sort Elt .
+endth
+
+th TRIV* is
+   using TRIV .
+   op * : -> Elt .
+endth
+
+th TRIV* is
+   sort Elt .
+   op * : -> Elt .
+endth
+
+
+th PREORD is
+   sort Elt . 
+   op _<=_ : Elt Elt -> Bool .
+   vars E1 E2 E3 : Elt .
+   eq E1 <= E1 = true .
+   cq E1 <= E3 = true if E1 <= E2 and E2 <= E3 .
+endth
+
+red E1 <= E1 . 
+
+
+th POSET is
+   sort Elt .
+   op _<_ : Elt Elt -> Bool .
+   vars E1 E2 E3 : Elt .
+   eq E1 < E1 = false .
+   cq E1 < E3 = true if E1 < E2 and E2 < E3 .
+endth
+
+
+th EQV is
+   sort Elt .
+   op _eq_ : Elt Elt -> Bool [comm] .
+   vars E1 E2 E3 : Elt .
+   eq (E1 eq E1) = true .
+   cq (E1 eq E3) = true if (E1 eq E2) and (E2 eq E3) .
+endth
+
+th MONOID is
+   sort M .
+   op e : -> M .
+   op _*_ : M M -> M [assoc id: e] .
+endth
+
+
+th FIELD is
+    sorts Field NzField .
+    subsorts NzField < Field .
+    protecting BOOL .
+    op 0 : -> Field .
+    op 1 : -> NzField .
+    op _+_ : Field Field -> Field [assoc comm id: 0].
+    op _*_ : Field Field -> Field [assoc comm id: 1].
+    op _*_ : NzField NzField -> NzField [assoc comm id: 1].
+    op -_ : Field -> Field .
+    op _^-1 : NzField -> NzField .
+    op nz : Field -> Bool .
+    vars X Y Z : Field .
+    vars X' Y' : NzField .
+    *** as NzField : X if nz(X) .
+    eq X + (- X) = 0 .
+    eq X' * (X' ^-1) = 1 .
+    eq X * (Y + Z) = (X * Y) + (X + Z) .
+    cq X = 0 if not nz(X) .
+endth
+
+
+
+obj LIST[X :: TRIV] is
+    sorts List NeList .
+    subsorts Elt < NeList < List .
+    op nil : -> List .
+    op __ : List List -> List [assoc id: nil prec 9] .
+    op __ : NeList List -> NeList [assoc prec 9] .
+    op head_ : NeList -> Elt .
+    op tail_ : NeList -> List .
+    op empty?_ : List -> Bool .
+    var X : Elt . var L : List .
+    eq head(X L) = X .
+    eq tail(X L) = L .
+    eq empty? L = L == nil .
+endo
+
+
+th VECTOR-SP[F :: FIELD] is
+    sort Vector .
+    op 0 : -> Vector .
+    op _+_ : Vector Vector -> Vector [assoc comm id: 0] .
+    op _*_ : Field Vector -> Vector .
+    vars F F1 F2 : Field .
+    vars V V1 V2 : Vector .
+    eq (F1 + F2) * V = (F1 * V) + (F2 * V) .
+    eq (F1 * F2) * V = F1 * (F2 * V) .
+    eq F * (V1 + V2) = (F * V1) + (F * V2) .
+endth
+
+
+
+obj 2TUPLE[C1 :: TRIV, C2 :: TRIV] is
+    sort 2Tuple .
+    op <<_;_>> : Elt.C1 Elt.C2 -> 2Tuple .
+    op 1*_ : 2Tuple -> Elt.C1 .
+    op 2*_ : 2Tuple -> Elt.C2 .
+    var E1 : Elt.C1 . var E2 : Elt.C2 .
+    eq 1* << E1 ; E2 >> = E1 .
+    eq 2* << E1 ; E2 >> = E2 .
+endo
+
+
+view NATG from POSET to NAT is
+    sort Elt to Nat .
+    op _<_ to _>_ .
+endv
+
+
+
+view NATLEQ from PREORD to NAT is
+    vars L1 L2 : Elt .
+    op L1 <= L2 to L1 < L2 or L1 == L2 .
+endv
+
+
+view NATD from POSET to NAT is
+    vars L1 L2 : Elt .
+    op L1 < L2 to L1 div L2 and L1 =/= L2 .
+endv
+
+
+view NATV from POSET to NAT is
+    sort Elt to Nat .
+    op _<_ to _<_  .
+endv
+
+
+view NATG from POSET to NAT is
+    op _<_ to _<_ .
+endv
+
+
+view NAT* from MONOID to NAT is
+    sort M to Nat .
+    op _*_ to _*_ .
+    op e to 1 .
+endv
+
+
+view NAT+ from MONOID to NAT is
+    op _*_ to _+_ .
+    op e to 0 .
+endv
+
+
+view LISTM from MONOID to LIST is
+    op _*_ to __ .
+    op e to nil .
+endv
+
+
+*** view LISTM from MONOID to LIST is endv
+
+obj LEXL[X :: POSET] is
+    protecting LIST[X] .
+    op _<<_ : List List -> Bool .
+    vars L L' : List . vars E E' : Elt .
+    eq L << nil = false .
+    eq nil << E L = true .
+    eq E L << E L' = L << L' .
+    cq E L << E' L' = E < E' if E =/= E' .
+endo
+
+
+make LEXL-LIST is LEXL[NATG] endm
+
+make NAT-LIST is LIST[NAT] endm
+
+*** make RAT-LIST is LIST[RAT] endm
+
+*** make RAT-VSP is VECTOR-SP[RAT] endm 
+
+*** make STACK-OF-LIST-OF-RAT is STACK[LIST[RAT]] endm
+
+make LEXL-NATG is LEXL[view to NAT is op _<_ to _>_ . endv] endm
+
+make LEXL-NAT is LEXL[NAT] endm 
+
+make LEXL-NATD is LEXL[NATD] endm 
+
+make PHRASE is LEXL[QIDL] endm
+
+obj SELF-REF is
+    sort A .
+    op a : -> A .
+    protecting LIST[A] .
+endo
+
+th EQV is
+    using PREORD * (op _<=_ to _eq_) .
+    vars E1 E2 : Elt .
+    eq (E1 eq E2) = (E2 eq E1) .
+endth
+
+
+obj NO-PROB is
+    protecting LIST[INT] .
+    sort A .
+    op a : -> A .
+    protecting (LIST * (op __ to _*_))[A] .
+endo
+
+obj TROUBLE is
+    protecting LIST[INT] .
+    sort A .
+    op a : -> A .
+    protecting LIST[A] * (op __ to _*_) .
+endo
+
+make PHRASE-LIST is LEXL[LEXL[QIDL]] endm
+
+make PHRASE-LIST is LEXL[LEXL[QIDL] * (op __ to _._) ] endm
+
+
+obj SORTING[X :: POSET] is
+    protecting LIST[X] .
+    op sorting_ : List -> List .
+    op unsorted_ : List -> Bool .
+    vars L L' L'' : List . vars E E' : Elt .
+    cq sorting L = L if unsorted L =/= true .
+    cq sorting L E L' E' L'' = sorting L E' L' E L'' if E' < E .
+    cq unsorted L E L' E' L'' = true if E' < E .
+endo
+
+red in SORTING[INT] : unsorted 1 2 3 4 . ***> should not be: true
+red unsorted 4 1 2 3 . 			 ***> should be: true
+red sorting 1 4 2 3 .                    ***> should be: 1 2 3 4
+
+make SORTING-PH-LIST is SORTING[ LEXL[QIDL] * (op __ to _._) ] endm
+
+***> good
+red sorting (('b . 'a)('a . 'a)('a . 'b)) .
+***> should be: ('a . 'a)('a . 'b)('b . 'a)
+
+red in SORTING[NATD] : sorting(18 6 5 3 1) .
+***> should contain: 1 3 6 18 
+
+
+th TOSET is
+    using POSET .
+    vars E1 E2 E3 : Elt .
+    cq E1 < E2 or E2 < E1 = true if E1 =/= E2 .
+endth
+
+obj BUBBLES[X :: TOSET] is
+    protecting LIST[X] .
+    op sorting_ : List -> List .
+    op sorted_ : List -> Bool .
+    vars L L' L'' : List .
+    vars E E' : Elt .
+    cq sorting L = L if sorted L .
+    cq sorting L E E' L'' = sorting L E' E L'' if E' < E .
+    eq sorted nil = true .
+    eq sorted E = true .
+    cq sorted E E' L = sorted E' L if E < E' or E == E' .
+endo
+
+red in A is BUBBLES[NAT] : sorting(18 5 6 3) .   ***> should be: 3 5 6 18
+red sorting(8 5 4 2) .                           ***> should be: 2 4 5 8 
+*** red in B is BUBBLES[NATD] : sorting(18 5 6 3) .  ***> mightnt contain: 3 6 18 
+*** red sorting(8 5 4 2) .                           ***> mightnt contain: 2 4 8 
+red in C is SORTING[NATD] : sorting(18 5 6 3) .  ***> should contain: 3 6 18 
+red sorting(8 5 4 2) .                           ***> should contain: 2 4 8 
+red in A : sorting(9 6 3 1) .                    ***> should be: 1 3 6 9 
+*** red in B : sorting(9 6 3 1) .                    ***> mightnt be: 1 3 6 9 
+red in C : sorting(9 6 3 1) .                    ***> should be: 1 3 6 9
+
+
+obj ITER[M :: MONOID] is
+    protecting LIST[M] .
+    op iter : List -> M .
+    var X : M . var L : List .
+    eq iter(nil) = e .
+    eq iter(X L) = X * iter(L) .
+endo
+
+make SIGMA is ITER[NAT+] endm 
+
+red iter(1 2 3 4) .
+***> should be 10 
+
+make PI is ITER[NAT*] endm 
+
+red iter(1 2 3 4) .
+***> should be 24. 
+
+make SIGMA+PI is
+   ITER[NAT+] * (op iter to sigma) + ITER[NAT*] * (op iter to pi)
+endm 
+
+red sigma(1 2 3 4) + pi(1 2 3 4) .
+***> should be 34
+
+
+th HOM[M :: MONOID] is
+    protecting LIST[M] .
+    op h : List -> M .
+    var L L' : List .
+    eq h(L L') = h(L) * h(L') .
+endth
+
+view ITER-IS-HOM[M :: MONOID] from HOM[M] to ITER[M] is endv
+
+*** make ITER-NAT is ITER[view to NAT is op _*_ to _+_ . endv] endm 
+
+
+th FN is
+   sort S .
+   op f : S -> S .
+endth
+
+obj MAP[F :: FN] is
+   protecting LIST[F] .
+   op map : List -> List .
+   var X : S . var L : List .
+   eq map(nil) = nil .
+   eq map(X L) = f(X) map(L) .
+endo
+
+obj FNS is
+   protecting INT .
+   ops (sq_)(dbl_)(_*3) : Int -> Int .
+   var N : Int .
+   eq sq N = N * N .
+   eq dbl N = N + N .
+   eq N *3 = N * 3 .
+endo
+
+red in MAP[(sq_).FNS] : map(0 nil 1 -2 3) . ***> should be: 0 1 4 9
+red in MAP[(dbl_).FNS] : map(0 1 -2 3) .    ***> should be: 0 2 -4 6
+red in MAP[(_*3).FNS] : map(0 1 -2 nil 3) . ***> should be: 0 3 -6 9
+
+
+obj 2[F :: FN] is
+   op xx : S -> S .
+   var X : S .
+   eq xx(X) = f(f(X)) .
+endo
+
+red in 2[(sq_).FNS] : xx(3) . 		        ***> should be: 81
+red xx(4) .                   		        ***> should be: 256
+red in 2[(dbl_).FNS] : xx(3) . 		        ***> should be: 12
+red in 2[2[(sq_).FNS]*(op xx to f)] : xx(2) .   ***> should be: 65536
+red xx(3) . 					***> should be: 43046721
+
+
+obj TIME is
+    sort Time .
+    op 0 : -> Time .
+    op s_ : Time -> Time .
+endo
+
+th WIRE is
+    protecting TIME + PROPC .
+    op f1 : Time -> Prop .
+endth
+
+obj NOT[W :: WIRE] is
+    op f2 : Time -> Prop .
+    var T : Time .
+    eq f2(0) = false .
+    eq f2(s T) = not f1(T) .
+endo
+
+
+obj F is
+    extending TIME + PROPC .
+    op t : -> Time .
+    op f0 : Time -> Prop .
+endo
+
+make 2NOT is NOT[ NOT[F]*(op f2 to f1) ] endm
+
+red f2(s s t) iff f0(t) .                 ***> should be: true
+
+
+obj BSET[X :: TRIV] is
+     sort Set .
+     *** pr IDENTICAL .
+     ops ({}) (omega) : -> Set .
+     op  {_} : Elt -> Set .
+     op _+_ : Set Set -> Set [assoc comm id: {} ] .        *** exclusive or
+     op _&_ : Set Set -> Set [assoc comm idem id: omega] .  *** intersection
+     vars S S' S'' : Set . vars E E' : Elt .
+     eq S + S = {} .
+     cq { E } & { E' } = {} if E =/= E' .
+     eq S & {} = {} .
+     cq S & (S' + S'') = (S & S') + (S & S'')
+                      if (S' =/= {}) and (S'' =/= {}) .
+        *** made conditional as an example of how to avoid non-termination
+        *** from identity completion (in fact, not required)
+endo
+
+
+obj SET[X :: TRIV] is
+     protecting BSET[X] .
+     protecting INT .
+     op _U_ : Set Set -> Set [assoc comm id: {}] .
+     op _-_ : Set Set -> Set .
+     op #_ : Set -> Int [prec 0] .
+     op _in_ : Elt Set -> Bool .
+     op _in_ : Set Set -> Bool .
+     op empty?_ : Set -> Bool .
+     var X : Elt . vars S S' S'' : Set .
+     eq S U S' = (S & S') + S + S' .
+     eq S - S' = S + (S & S') .
+     eq empty? S = S == {} .
+     eq X in S = { X } & S =/= {} .
+     eq S in S' = S U S' == S' .
+     eq #{} = 0 .
+     cq #({ X } + S) = #S if X in S .
+     cq #({ X } + S) = 1 + # S if not X in S .
+endo
+
+
+*** test cases
+
+obj SET-OF-INT is
+   protecting SET[INT] .
+   ops s1 s2 s3 : -> Set [memo] .
+   eq s1 = { 1 } .
+   eq s2 = s1 U { 2 } .
+   eq s3 = s2 U { 3 } .
+endo
+
+red s3 .              ***> should be: {1,2,3}
+red # s3 .            ***> should be: 3
+red (s2 U s1) .       ***> should be: {1,2}
+red #(s3 U s1) .      ***> should be: 3
+red empty?(s3 + s3) . ***> should be: true
+red empty?(s1 + s3) . ***> should be: false
+red 3 in s2 .         ***> should be: false
+red s1 in s3 .        ***> should be: true
+red s1 - s3 .         ***> should be: {}
+red s3 - s2 .         ***> should be: {3}
+red s3 & s1 .         ***> should be: {1}
+red s3 & s2 .         ***> should be: {1,2}
+red omega U s2 .      ***> should be: omega
+
+
+obj LIST[X :: TRIV] is
+    sorts List NeList .
+    op nil : -> List .
+    subsorts Elt < NeList < List .
+    op __ : List List -> List [assoc id: nil] .
+    op __ : NeList List -> NeList .
+    op __ : NeList NeList -> NeList .
+    protecting NAT .
+    op |_| : List -> Nat .
+    eq | nil | = 0 .
+    var E : Elt . var L : List .
+    eq | E L | = 1 + | L | .
+    op tail_ : NeList -> List [prec 120] .
+    var E : Elt . var L : List .
+    eq tail E L = L .
+endo
+
+
+obj ARRAY[INDEX VALUE :: TRIV] is
+    sort Array .
+    op nilArr : -> Array .
+    op put : Elt.INDEX Elt.VALUE Array -> Array .
+    op _[_] : Array Elt.INDEX -> Elt.VALUE .
+    op _in_ : Elt.INDEX Array -> Bool .
+    op undef : Elt.INDEX -> Elt.VALUE . *** err-op
+    var A : Array . var I I' : Elt.INDEX . var E : Elt.VALUE .
+    eq put(I,E,A)[ I ] = E .
+    ceq put(I,E,A)[ I' ] = A [ I' ] if I =/= I' .
+    eq I in nilArr = false .
+    eq I in put(I',E,A) = I == I' or I in A .
+    ceq A [ I ] = undef(I) if not I in A . *** err-eqn
+endo
+
+*** the expressions of Fun
+
+obj EXP is
+    dfn Env is ARRAY[QID, INT] .
+    sorts IntExp BoolExp .
+    subsorts Int Id < IntExp .
+    subsorts Bool < BoolExp .
+    ops (_and_) (_or_) : BoolExp BoolExp -> BoolExp .
+    op not_ : BoolExp -> BoolExp .
+    op _<_ : IntExp IntExp -> BoolExp .
+    op _=_ : IntExp IntExp -> BoolExp .
+    op if_then_else_fi : BoolExp IntExp IntExp -> IntExp .
+    ops (_+_) (_-_) (_*_) : IntExp IntExp -> IntExp .
+    op [[_]]_ : IntExp Env -> Int .
+    op [[_]]_ : BoolExp Env -> Bool .
+    var N : Int . var T : Bool . vars E E' : IntExp .
+    vars B B' : BoolExp . var I : Id . var V : Env .
+    eq [[ N ]] V = N .
+    eq [[ I ]] V = V [ I ] .
+    eq [[ E + E' ]] V = ([[ E ]] V) + ([[ E' ]] V) .
+    eq [[ E - E' ]] V = ([[ E ]] V) - ([[ E' ]] V) .
+    eq [[ E * E' ]] V = ([[ E ]] V) * ([[ E' ]] V) .
+    eq [[ T ]] V = T .
+    eq [[ E < E' ]] V = ([[ E ]] V) < ([[ E' ]] V) .
+    eq [[(E = E')]] V = ([[ E ]] V) == ([[ E' ]] V) .
+    eq [[ B and B' ]] V = ([[ B ]] V) and ([[ B' ]] V) .
+    eq [[ B or B' ]] V = ([[ B ]] V) or ([[ B' ]] V) .
+    eq [[ not B ]] V = not([[ B ]] V) .
+    eq [[ if B then E else E' fi ]] V =
+           if [[ B ]] V then [[ E ]] V else [[ E' ]] V fi .
+endo
+
+*** the statements of Fun
+
+obj STMT is
+    sort Stmt . protecting EXP .
+    op _;_ : Stmt Stmt -> Stmt [assoc] .
+    op _:=_ : Id IntExp -> Stmt .
+    op while_do_od : BoolExp Stmt -> Stmt .
+    op [[_]]_ : Stmt Env -> Env .
+    vars S S' : Stmt . var V : Env . var E : IntExp .
+    var B : BoolExp . var I : Id .
+    eq [[ I := E ]] V = put(I,[[ E ]] V, V) .
+    eq [[ S ; S' ]] V = [[ S' ]] [[ S ]] V .
+    eq [[ while B do S od ]] V =
+          if [[ B ]] V then [[ while B do S od ]] [[ S ]] V else V fi .
+endo
+
+
+*** evaluation of Fun programs
+
+obj FUN is
+    sorts Fun Init .
+    protecting STMT .
+    dfn IdList is LIST[QID] .
+    dfn IntList is LIST[INT] .
+    dfn InitList is (LIST *(op nil to nil-init, op (__) to (_;_)))[Init] .
+    op _initially_ : Id IntExp -> Init [prec 1].
+    op fun _ _ is vars _ body: _ : Id IdList InitList Stmt -> Fun .
+    op [[_:=_]]_ : IdList IntList Env -> Env .
+    op [[_]]_ : InitList Env -> Env .
+    op [[_]][_]_ : Fun Env IntList -> Env .
+    op [[_]]_ : Fun IntList -> Int .
+    op wrong#args : -> Env . *** err-op
+    vars I F : Id .
+    var Is : IdList .
+    var N : Int .
+    var Ns : IntList .
+    var E : IntExp .
+    var INs : InitList .
+    var S : Stmt .
+    var V : Env .
+    eq [[ nil-init ]] V = V .
+    eq [[(I initially E); INs ]] V = [[ INs ]] [[ I := E ]] V .
+    eq [[ I Is := N Ns ]] V = ([[ I := N ]] ([[ Is := Ns ]] V)).STMT .
+    eq [[(nil).IdList := (nil).IntList ]] V = V .
+    eq [[ fun F(Is) is vars nil-init body: S ]][ V ](Ns) = [[ S ]] V .
+    eq [[ fun F(Is) is vars INs body: S ]][ V ](Ns) =
+               [[ S ]] [[ INs ]] [[ Is := Ns ]] V .
+    eq [[ fun F(Is) is vars INs body: S ]](Ns) =
+               [[ fun F(Is) is vars INs body: S ]][ nilArr ](Ns) [ F ] .
+    cq [[ Is := Ns ]] V = wrong#args if | Is | =/= | Ns | . *** err-qn
+
+endo
+
+
+*** pow(n m) finds the nth power of m for positive n or 0
+
+red [[ fun 'pow('n 'm) is
+         vars 'pow initially 1
+         body:
+           while 0 < 'n
+             do ('pow := 'pow * 'm) ;
+                ('n := 'n - 1)
+             od
+    ]](4 2) .
+
+***> should be: 16
+*** factorial of n
+
+red [[ fun 'fac('n) is
+           vars ('fac initially 1) ; ('i initially 0)
+           body:
+             while 'i < 'n
+                do ('i := 'i + 1) ;
+                   ('fac := 'i * 'fac)
+                od
+    ]](5) .
+
+***> should be: 120
+
+*** max finds the maximum of a list of three numbers
+
+red [[ fun 'max('a 'b 'c) is
+           vars 'n initially 2
+           body:
+                ('max := 'a);
+                while 0 < 'n
+                   do ('n := 'n - 1);
+                      ('x := 'b);
+                      ('b := 'c);
+                      ('max := if 'x < 'max then 'max else 'x fi)
+                   od
+    ]](3 123 32) .
+
+***> should be: 123
+
+
+
+obj SUBST is
+    sorts Eqn Term .
+    protecting QID .
+    subsort Id < Term .
+    pr TERMS is (LIST * (sort List to TermList,
+                         sort NeList to NeTermList)
+                )[Term] .
+    dfn Op is QID .
+    op _[_] : Op TermList -> Term [prec 1] .
+    op _=_ : Term Term -> Eqn [comm prec 120] .
+    pr SYSTEM is (LIST * (sort List to System,
+                          sort NeList to NeSystem,
+                          op nil to null,
+                          op (__) to (_&_)))[Eqn] .
+    op {_} : System -> System . *** scope delimiter
+    op _=_ : TermList TermList -> System [comm prec 120] .
+    vars T U V : Term . var Us : NeTermList .
+    var S : NeSystem . var Ts : TermList .
+    eq (T Ts = U Us) = (T = U) & (Ts = Us).
+    op let_be_in_ : Id Term Term -> Term .
+    op let_be_in_ : Id Term TermList -> TermList .
+    op let_be_in_ : Id Term Eqn -> Eqn .
+    op let_be_in_ : Id Term System -> System .
+    vars X Y : Id . var F : Op .
+    eq let X be T in nil = nil .
+    eq let X be T in Y = if X == Y then T else Y fi .
+    eq let X be T in F[Ts] = F[let X be T in Ts].
+    eq let X be T in (U Us) = (let X be T in U) (let X be T in Us).
+    eq let X be T in (U = V) = ((let X be T in U) = (let X be T in V)) .
+    eq let X be T in null = null .
+    eq let X be T in ((U = V) & S) =
+             (let X be T in (U = V)) & (let X be T in S).
+
+endo
+
+***> first without occur check
+
+obj UNIFY is
+    using SUBST . *** with SYSTEM and TERMS .
+    op unify_ : System -> System [prec 120].
+    op fail : -> Eqn .
+    var T : Term . vars Ts Us : NeTermList .
+    vars S S' S'' : System . var X : Id .
+    eq unify S = { { S } } .
+    eq S & (T = T) & S' = S & S' .
+    eq S & fail & S' = fail .
+    eq let X be T in fail = fail .
+    eq { null } = null .
+    eq { fail } = fail .
+    vars F G : Op . vars X : Id .
+    eq { S & (F[Ts] = G[Us]) & S' } =
+          if F == G and | Ts | == | Us |
+             then { S & (Ts = Us) & S' }
+             else fail
+          fi .
+    eq { S & { S' & (X = T) & S''} } =
+          if X == T
+             then { S & { S' & S'' } }
+             else { (X = T) & (let X be T in S) & { let X be T in (S' & S'')}}
+          fi .
+endo
+
+red unify 'f['g['X] 'Y] = 'f['g['h['Y]] 'h['Z]] .
+red unify 'f['X 'Y] = 'f['Y 'g['Y]] .
+red unify ('f['g['X] 'Y] = 'f['g['h['Y]] 'h['Z]]) & ('h['X] = 'Z) .
+red unify 'f['X 'g['Y]] = 'f['Z 'Z] .
+red unify 'f['X 'g['Y]] = 'f['Z] .
+red unify 'f['Y 'g['Y]] = 'f['h['Z] 'Z] .
+red unify 'f['Y 'a[nil]] = 'f['g['a[nil]] 'Z] .
+
+
+***> now add occur check
+
+obj UNIFY-OCH is using UNIFY .
+    op _in_ : Id TermList -> Bool .
+    vars X Y : Id . var F : Op . var T : Term . var Ts : NeTermList .
+    eq X in Y = X == Y .
+    eq X in F[Ts] = X in Ts .
+    eq X in T Ts = X in T or X in Ts .
+    cq (X = T) = fail if X in T .
+endo
+
+red unify 'f['g['X] 'Y] = 'f['g['h['Y]] 'h['Z]].
+red unify 'f['X 'Y] = 'f['Y 'g['Y]].
+red unify ('f['g['X] 'Y] = 'f['g['h['Y]] 'h['Z]]) & ('h['X] = 'Z).
+red unify 'f['X 'g['Y]] = 'f['Z 'Z].
+red unify 'f['X 'g['Y]] = 'f['Z].
+red unify 'f['Y 'g['Y]] = 'f['h['Z] 'Z].
+red unify 'f['Y 'a[nil]] = 'f['g['a[nil]] 'Z].
+
+
+
+
+***> laze list and first 10 primes
+obj LAZYLIST[X :: TRIV] is
+    sort List .
+    subsort Elt < List .
+    op nil : -> List .
+    op __ : List List ->  List [  assoc idr: nil prec 80 strat (0) ] .
+endo
+
+obj SIEVE is
+    protecting LAZYLIST[INT] .
+    op force : List List -> List [strat (1 2 0)] .
+    op show_upto_ : List Int -> List .
+    op filter_with_ : List Int -> List .
+    op ints-from_ : Int -> List .
+    op sieve_ : List -> List .
+    op primes : -> List .
+    vars P I E : Int .
+    var S L : List .
+    eq force(L,S) = L S .
+    eq show nil upto I = nil .
+    eq show E S upto I =
+          if I == 0 then nil else force(E,show S upto (I - 1)) fi .
+    eq filter nil with P = nil .
+    eq filter I S with P = if (I rem P) == 0
+                              then filter S with P
+                              else I (filter S with P)
+                           fi .
+    eq ints-from I = I (ints-from (I + 1)) .
+    eq sieve nil = nil .
+    eq sieve (I S) = I (sieve (filter S with I)) .
+    eq primes = sieve (ints-from 2) .
+endo
+
+
+red show primes upto 10 . ***> should be: 2 3 5 7 11 13 17 19 23 29
+
+
+obj NAT is
+    sort Nat .
+    op 0 : -> Nat .
+    op s_ : Nat -> Nat [prec 1] .
+    op _+_ : Nat Nat -> Nat .
+    vars L M N : Nat .
+    eq M + 0 = M .
+    eq M + s N = s(M + N) .
+endo
+
+open .
+    ops l m n : -> Nat .
+
+    *** base case, n=0: l+(m+0)=(l+m)+0
+    red l + (m + 0) == (l + m) + 0 .
+
+    *** induction step
+    eq l + (m + n) = (l + m) + n .
+    red l + (m + s n) == (l + m) + s n .
+close
+
+*** thus we can assert
+
+obj ASSOC is
+    protecting NAT .
+    vars-of NAT .
+    eq L + (M + N) = (L + M) + N .
+endo
+
+open .
+    vars-of NAT .
+    ops m n : -> Nat .
+
+    *** show lemma0: 0 + n = n, by induction on n
+    *** base for lemma0, n=0
+    red 0 + 0 == 0 .
+
+    *** induction step
+    eq 0 + n = n .
+    red 0 + (s n) == s n .
+
+    *** thus we can assert
+    eq 0 + N = N .
+
+    *** show lemma1: (s m) + n = s(m + n), again by induction on n
+    *** base for lemma1, n=0
+    red (s m)+ 0 == s(m + 0) .
+
+    *** induction step
+    eq (s m)+ n = s(m + n) .
+    red (s m) + (s n) == s(m + s n) .
+
+    *** thus we can assert
+    eq (s M)+ N = s(M + N).
+
+    *** show m + n = n + m, again by induction on n
+    *** the base case, n=0
+    red m + 0 == 0 + m .
+
+    *** induction step
+    eq m + n = n + m .
+    red m + (s n) == (s n) + m .
+close
+
+
+
+obj NAT is
+    sort Nat .
+    op 0 : -> Nat .
+    op s_ : Nat -> Nat [prec 1] .
+    op _+_ : Nat Nat -> Nat [assoc comm] .
+    vars M N : Nat .
+    eq M + 0 = M .
+    eq M + s N = s(M + N).
+    op _*_ : Nat Nat -> Nat .
+    eq M * 0 = 0 .
+    eq M * s N = (M * N)+ M .
+endo
+
+open .
+   vars-of NAT .
+   ops m n : -> Nat .
+
+   *** first show two lemmas, 0*n=0 and (sm)*n=(m*n)+n
+   *** base for first lemma
+   red 0 * 0 == 0 .
+
+   *** induction step for first lemma
+   eq 0 * n = 0 .
+   red 0 * s n == 0 .
+
+   *** thus we can assert
+   eq 0 * N = 0 .
+
+   *** base for second lemma
+   red (s n)* 0 == (n * 0) + 0 .
+
+   *** induction step for second lemma
+   eq (s m) * n = (m * n)+ n .
+   red (s m)*(s n) == (m * s n)+ s n .
+
+   *** thus
+   eq (s M)* N = (M * N)+ N .
+
+   *** now define
+   op sum : Nat -> Nat .
+   eq sum(0) = 0 .
+   eq sum(s N) = (s N)+ sum(N) .
+
+   *** show sum(n)+sum(n)=n*sn
+   *** base case
+   red sum(0) + sum(0) == 0 * s 0 .
+
+   *** induction step
+   eq sum(n) + sum(n) = n * s n .
+   red sum(s n) + sum(s n) == (s n)*(s s n) .
+
+close
+
+
+obj NAT is
+   sort Nat .
+   op 0 : -> Nat .
+   op s_ : Nat -> Nat [prec 1] .
+   op _+_ : Nat Nat -> Nat [assoc comm] .
+   vars L M N : Nat .
+   eq M + 0 = M .
+   eq M + s N = s(M + N) .
+   op _*_ : Nat Nat -> Nat [assoc comm] .
+   eq M * 0 = 0 .
+   eq M * s N = (M * N)+ M .
+   eq L * (M + N) = (L * M) + (L * N) .
+   eq M + M + M = 0 .
+endo
+
+*** base case, x = 0
+red 0 * 0 * 0 == 0 .
+
+*** induction step
+open .
+    op x : -> Nat .
+    eq x * x * x = x .
+    red (s x)*(s x)*(s x) == s x .
+close
+
+
+
+obj COMBINATORS is
+   sort T .
+   op __ : T T -> T [ gather (E e) ] . *** forces left association
+   ops S K I : -> T .
+   vars M N P : T .
+   eq K M N = M .
+   eq I M = M .
+   eq S M N P = (M P) (N P).
+endo
+
+
+open .
+   ops m n p : -> T .
+   red S K K m == I m .
+   red S K S m == I m .
+   red S I I I m == I m .
+   red K m n == S(S(K S)(S(K K)K))(K(S K K))m n .
+   red S m n p == S(S(K S)(S(K(S(K S)))(S(K(S(K K)))S)))(K(K(S K K)))m n p .
+   red S(K K) m n p == S(S(K S)(S(K K)(S(K S)K)))(K K) m n p .
+   let X = S I .
+   red X X X X m == X(X(X X)) m .
+close 
+
+
+obj NAT is
+    sorts Nat NzNat Zero .
+    subsorts Zero NzNat < Nat .
+    op 0 : -> Zero .
+    op s_ : Nat -> NzNat .
+    op p_ : NzNat -> Nat .
+    op _+_ : Nat Nat -> Nat [assoc comm] .
+    op _*_ : Nat Nat -> Nat .
+    op _*_ : NzNat NzNat -> NzNat .
+    op _>_ : Nat Nat -> Bool .
+    op d : Nat Nat -> Nat [comm] .
+    op quot : Nat NzNat -> Nat .
+    op gcd : NzNat NzNat -> NzNat [comm] .
+    vars N M : Nat . vars N' M' : NzNat .
+    eq p s N = N .
+    eq N + 0 = N .
+    eq (s N) + (s M) = s s (N + M) .
+    eq N * 0 = 0 .
+    eq 0 * N = 0 .
+    eq (s N) * (s M) = s (N + (M + (N * M))) .
+    eq 0 > M = false .
+    eq N' > 0 = true .
+    eq s N > s M = N > M .
+    eq d(0,N) = N .
+    eq d(s N, s M) = d(N,M) .
+    eq quot(N,M') = if ((N > M') or (N == M'))
+                      then s quot(d(N,M'),M')
+                      else 0
+                    fi .
+    eq gcd(N',M') = if N' == M'
+                       then N'
+                       else (if N' > M'
+                                then  gcd(d(N',M'),M')
+                                else gcd(N',d(N',M'))
+                             fi)
+                     fi .
+endo
+
+
+obj INT is
+    sorts Int NzInt .
+    protecting NAT .
+    subsort Nat < Int .
+    subsorts NzNat < NzInt < Int .
+    op -_ : Int -> Int .
+    op -_ : NzInt -> NzInt .
+    op _+_ : Int Int -> Int [assoc comm] .
+    op _*_ : Int Int -> Int .
+    op _*_ : NzInt NzInt -> NzInt .
+    op quot : Int NzInt -> Int .
+    op gcd : NzInt NzInt -> NzNat [comm] .
+    vars I J : Int . vars I' J' : NzInt . vars N' M' : NzNat .
+    eq - - I = I .
+    eq - 0 = 0 .
+    eq I + 0 = I .
+    eq M' + (- N') = if N' == M'
+                         then 0
+                         else (if N' > M'
+                                  then - d(N',M')
+                                  else d(N',M')
+                               fi)
+                     fi .
+    eq (- I) + (- J) = - (I + J) .
+    eq I * 0 = 0 .
+    eq 0 * I = 0 .
+    eq I * (- J) = - (I * J) .
+    eq (- J) * I = - (I * J) .
+    eq quot(0,I') = 0 .
+    eq quot(- I',J') = - quot(I',J') .
+    eq quot(I',- J') = - quot(I',J') .
+    eq gcd(- I',J') = gcd(I',J') .
+endo
+
+
+
+obj RAT is
+    sorts Rat NzRat .
+    protecting INT .
+    subsort Int < Rat .
+    subsorts NzInt < NzRat < Rat .
+    op _/_ : Rat NzRat -> Rat .
+    op _/_ : NzRat NzRat -> NzRat .
+    op -_ : Rat -> Rat .
+    op -_ : NzRat -> NzRat .
+    op _+_ : Rat Rat -> Rat [assoc comm] .
+    op _*_ : Rat Rat -> Rat .
+    op _*_ : NzRat NzRat -> NzRat .
+    vars I' J' : NzInt . vars R S : Rat . vars R' S' : NzRat .
+    eq R / (R' / S') = (R * S') / R' .
+    eq (R / R') / S' = R / (R' * S') .
+    cq J' / I' = quot(J',gcd(J',I')) / quot(I',gcd(J',I'))
+                                           if gcd(J',I') =/= s 0 .
+    eq R / s 0 = R .
+    eq 0 / R' = 0 .
+    eq R / (- R') = (- R) / R' .
+    eq - (R / R') = (- R) / R' .
+    eq R + (S / R') = ((R * R') + S) / R' .
+    eq R * (S / R') = (R * S) / R' .
+    eq (S / R') * R = (R * S) / R' .
+endo
+
+
+
+obj CPX-RAT is
+    sorts Cpx Imag NzImag NzCpx .
+    protecting RAT .
+    subsort Rat < Cpx .
+    subsort NzRat < NzCpx . 
+    subsorts NzImag < NzCpx Imag < Cpx .
+    subsorts Zero < Imag .
+    op _i : Rat -> Imag .
+    op _i : NzRat -> NzImag .
+    op -_ : Cpx -> Cpx .
+    op -_ : NzCpx -> NzCpx .
+    op _+_ : Cpx Cpx -> Cpx [assoc comm] .
+    op _+_ : NzRat NzImag -> NzCpx [assoc comm] .
+    op _*_ : Cpx Cpx -> Cpx .
+    op _*_ : NzCpx NzCpx -> NzCpx .
+    op _/_ : Cpx NzCpx -> Cpx .
+    op _# : Cpx -> Cpx .
+    op | _ |^2 : Cpx -> Rat .
+    op | _ |^2 : NzCpx -> NzRat .
+    vars R S : Rat . vars R' R'' S' S'' : NzRat . vars A B C : Cpx .
+    eq 0 i = 0 .
+    eq C + 0 = C .
+    eq (R i) + (S i) = (R + S) i .
+    eq -(R' + (S' i)) = (- R') + ((- S') i ) .
+    eq -(S' i) = (- S') i .
+    eq R * (S i) = (R * S) i .
+    eq (S i) * R = (R * S) i .
+    eq (R i) * (S i) = - (R * S) .
+    eq C * (A + B) = (C * A) + (C * B) .
+    eq (A + B) * C = (C * A) + (C * B) .
+    eq R # = R .
+    eq (R' + (S' i))# = R' + ((- S') i) .
+    eq (S' i) # = ((- S') i) .
+    eq | C |^2 = C * (C #) .
+    eq (S' i) / R'' = (S' / R'') i .
+    eq (R' + (S' i)) / R'' = (R' / R'') + ((S' / R'') i) .
+    eq A / (R' i) = A * (((- s 0) / R') i) .
+    eq A / (R'' + (R' i)) =  A *((R'' / | (R'' + (R' i)) |^2) +
+                             (((- R') / | (R'' + (R' i)) |^2) i)).
+endo
+
+
+obj QUAT-RAT is
+    sorts Quat NzQuat J NzJ .
+    protecting CPX-RAT .
+    subsorts NzJ Zero < J < Quat .
+    subsorts NzCpx < NzQuat Cpx < Quat .
+    subsort NzJ < NzQuat .
+    op _j : Cpx -> J .
+    op _j : NzCpx -> NzJ .
+    op -_ : Quat -> Quat .
+    op _+_ : Quat Quat -> Quat [assoc comm] .
+    op _+_ : Cpx NzJ -> NzQuat [assoc comm] .
+    op _*_ : Quat Quat -> Quat .
+    op _*_ : NzQuat NzQuat -> NzQuat .
+    op _/_ : Quat NzQuat -> Quat .
+    op _# : Quat -> Quat .
+    op | _ |^2 : Quat -> Rat .
+    op | _ |^2 : NzQuat -> NzRat .
+    vars O P Q : Quat . vars B C : Cpx . vars C' : NzCpx .
+    eq 0 j = 0 .
+    eq Q + 0 = Q .
+    eq -(C + (B j)) = (- C) + ((- B) j ) .
+    eq (C j) + (B j) = (C + B) j .
+    eq C * (B j) = (C * B) j .
+    eq (B j) * C = (B * (C #)) j .
+    eq (C j) * (B j) = - (C * (B #)) .
+    eq Q * (O + P) = (Q * O) + (Q * P) .
+    eq (O + P) * Q = (O * Q) + (P * Q) .
+    eq (P + Q) # = (P #) + (Q #) .
+    eq (C j) # = (- C) j .
+    eq | Q |^2 = Q * (Q #) .
+    eq Q / (C' j) = Q * ((s 0 / (- C')) j) .
+    eq Q / (C + (C' j)) = Q * (((C #) / | (C + (C' j)) |^2) +
+                          (((- C') / | (C + (C' j)) |^2) j)) .
+endo
+
+
+
+obj TST is
+    protecting QUAT-RAT .
+    ops 1 2 3 4 5 6 7 8 9 : -> NzNat [memo] .
+    eq 1 = s 0 .
+    eq 2 = s 1 .
+    eq 3 = s 2 .
+    eq 4 = s 3 .
+    eq 5 = s 4 .
+    eq 6 = s 5 .
+    eq 7 = s 6 .
+    eq 8 = s 7 .
+    eq 9 = s 8 .
+endo
+
+red 3 + 2 .
+red 3 * 2 .
+red p p 3 .
+red 4 > 8 .
+red d(2,8) .
+red quot(7,2) .
+red gcd(9,6) .
+red (- 4) + 8 .
+red (- 4) * 2 .
+red 8 / (- 2) .
+red (1 / 3) + (4 / 6) .
+red | 1 + (2 i) |^2 .
+red | (1 + (3 i)) + (1 + ((- 2) i)) |^2 .
+red (3 + ((3 i) + ((- 2) i))) / ((2 i) + 2) .
+red (2 + ((3 i) j)) * ((5 i) + (7 j)) .
+red (1 + ((1 i) j)) / (2 j) .
+
+
+
+th GROUPL is
+   sort Elt .
+   op _*_ : Elt Elt -> Elt .
+   op e : -> Elt .
+   op _-1 : Elt -> Elt [prec 2] .
+   var A B C : Elt .
+   [lid] eq e * A = A .
+   [lnv] eq A -1 * A = e .
+   [las] eq A * (B * C) = (A * B) * C .
+endth
+
+open .
+   op a : -> Elt .
+
+   *** first, prove the right inverse law:
+
+   start a * a -1 .
+   ***> [0] (a * a -1)
+
+   apply -.lid at term .
+   ***> [1] e * (a * a -1)
+
+   apply -.lnv with A = (a -1) within term .
+   ***> [2] ((a -1) -1 * a -1) * (a * a -1)
+
+   apply .las at term .
+   ***> [3] ((a -1 -1 * a -1)* a)* a -1
+
+   apply -.las with A = (a -1 -1) within term .
+   ***> [4] ((a -1 -1 * (a -1 * a)) * a -1
+
+   apply .lnv within term .
+   ***> [5] (a -1 -1 * e) * a -1
+
+   apply -.las at term .
+   ***> [6] a -1 -1 * (e * a -1)
+
+   apply .lid within term .
+   ***> [7] a -1 -1 * a -1
+
+   apply .lnv at term .
+   ***> [8] e
+
+   *** we can now add the proven equation
+   [rnv] eq (A * (A -1)) = e .
+
+   *** next, we prove the right identity law:
+
+   start a * e .
+   ***> [0] a * e
+
+   apply -.lnv with A = a within term .
+   ***> [1] a *(a -1 * a)
+
+   apply .las at term .
+   ***> [2] (a * a -1)* a
+
+   apply .rnv within term .
+   ***> [3] e * a
+
+   apply .lid at term .
+   ***> [4] a
+
+   ***> we can add the proven equation
+   [rid] eq A * e = A .
+
+close
+
+th GROUPLA is
+   sort Elt .
+   op _*_ : Elt Elt -> Elt [assoc] .
+   op e : -> Elt .
+   op _-1 : Elt -> Elt [prec 2] .
+   var A : Elt .
+   [lid] eq e * A = A .
+   [linv] eq A -1 * A = e .
+endth
+
+open .
+   op a : -> Elt .
+
+   *** first, prove the right inverse law:
+   start a * a -1 .
+
+   apply -.lid at term .
+   ***> should be: e * a * a -1
+
+   apply -.linv with A = (a -1) within term .
+   ***> should be: a -1 -1 * a -1 * a * a -1
+
+   apply .linv at [2 .. 3] of term .
+   ***> should be: a -1 -1 * e * a -1
+
+   apply reduction at term .
+   ***> should be: e
+
+   *** add the proven equation:
+   [rinv] eq A * A -1 = e .
+
+   *** second prove the right identity law:
+   start a * e .
+
+   apply -.linv with A = a within term .
+   ***> should be: a * a -1 * a
+
+   apply .rinv at [1 .. 2] .
+   ***> should be: e * a
+
+   apply reduction at term .
+   ***> should be: a
+
+   *** add the proven equation:
+   [rid] eq A * e = A .
+
+close
+
+
+th INJ is
+   sorts A B .
+   op f_ : A -> B .
+   op g_ : B -> A .
+   var A : A . vars B B' : B .
+   [lnv] eq g f A = A .
+   [inj] cq B = B' if g B == g B' .
+endth
+
+open .
+  op b : -> B .
+  start f g b .
+  apply .inj with B' = b at term .
+  apply red at term .
+  ***> should be: b
+close
+
+
+
+

@@ -1,0 +1,511 @@
+***> Chapter 8, First Order Logic
+
+  obj B is sort B .
+    op tt : -> B .
+  endo
+
+  th R is sort Elt .
+    ex B .
+    op _R_ : Elt Elt -> B .
+  endth
+  obj R* is ex B .  pr R .
+    op _R*_ : Elt Elt -> B .
+    vars X Y Z : Elt .
+    cq X R* Y = tt if X R  Y == tt .
+    cq X R* Z = tt if X R* Y == tt and Y R* Z == tt .
+  endo
+
+  th R is sort Elt .
+    op _R_ : Elt Elt -> Bool .
+  endth
+
+  obj R* is pr R .
+    op _R*_ : Elt Elt -> Bool .
+    vars X Y Z : Elt .
+    cq X R* Y = true if X R  Y .
+    cq X R* Z = true if X R* Y and Y R* Z .
+  endo
+
+  obj META is sorts Meta Sen Sig Type .
+    pr QID .
+    dfn BType is QID .
+    subsort BType < Type .
+    subsort Bool  < Sen Meta .
+
+    op _|=[_] _ : Sen Sig Sen -> Meta [prec 11].
+    op (_][_:_) : Sig Id Type -> Sig .
+    op _and_ : Meta Meta -> Meta [assoc comm prec 2].
+    op _and_ : Sen  Sen  -> Sen  [assoc comm prec 2].
+    op _or_  : Meta Meta -> Meta [assoc comm prec 7].
+    op _or_  : Sen  Sen  -> Sen  [assoc comm prec 7].
+    op _=>_  : Meta Meta -> Meta [prec 9].
+    op _=>_  : Sen  Sen  -> Sen  [prec 9].
+    op not_  : Meta      -> Meta [prec 1].
+    op not_  : Sen       -> Sen  [prec 1].
+    op (all_:_ _) : Id Type Sen -> Sen .
+
+    vars A P Q : Sen .  var X : Id .  var T : Type .  var S : Sig .
+    [ass] eq A and P |=[S] P    =  true .
+    [and] eq A |=[S] (P and Q)  =  (A |=[S] P) and (A |=[S] Q) .
+    [or]  eq A |=[S] (P or Q)   =  (A |=[S] P) or  (A |=[S] Q) .
+    [imp] eq A |=[S] (P => Q)   =  (A and P) |=[S] Q .
+    [not] eq A |=[S] (not P)    =  (A and P) |=[S] false .
+    [all] eq A |=[S] (all X : T P)  =  A |=[S][X : T] P .
+  endo
+
+  open .
+  ops A1 P1 P2 : -> Sen .
+  op Sigma : -> Sig .
+  red A1 |=[Sigma] (all 'w1 : 'Bus (all 'w2 : 'Bus P1 => P2)).
+  ***> should be: A1 and P1 |=[Sigma] ['w1 : 'Bus]['w2 : 'Bus] P2
+  close
+
+  open .
+  op all-X_ : Sen -> Sen .
+  op Sigma : -> Sig .
+  vars-of .
+  eq all-X A = (all 'x : 'Elt (all 'y : 'Elt (all 'z : 'Elt A))).
+  ops P1 P2 P12 Q1 Q2 Q12 : -> Sen .
+  eq P12 = P1 and P2 .
+  eq Q12 = Q1 and Q2 .
+  red ((all-X (P1  => Q1)) and (all-X (P2 => Q2))) |=[Sigma]
+       (all-X (P12 => Q12)).
+  close
+
+  obj META2 is pr META .
+    var A A' P Q : Sen .  var S : Sig .
+    [modp]  eq A |=[S]  P      =  (A  |=[S] Q) and (A |=[S] Q => P) .
+    [contd] eq A |=[S]  false  =  (A  |=[S] Q) and (A |=[S] not Q) .
+    [lemma] eq A |=[S]  P      =  (A  |=[S] Q) and (A and Q |=[S] P) .
+    [astr]  eq A |=[S]  P      =  (A' |=[S] P) and (A |=[S] A') .
+  endo
+
+  obj META3 is pr META2 .
+    vars A P Q R : Sen .  var S : Sig .
+    eq A and A       =  A .
+    eq A and true    =  A .
+    eq A and false   =  false .
+    eq A and not A   =  false .
+    eq A or  false   =  A .
+    eq A or  true    =  true .
+    eq A => true     =  true .
+    eq A => false    =  not A .
+    eq not not A     =  A .
+    eq P |=[S] P     =  true .
+    eq false |=[S] P =  true .
+    eq (A and P) |=[S] P  =  true .
+    eq A and P and (P => Q) |=[S] R  =  A and P and Q and (P => Q) |=[S] R .
+  endo
+
+  open .
+  ops P1 P2  : -> Sen .
+  op Phi : -> Sig .
+  red P1 |=[Phi]     not P1 => P2 .
+  red P1 and P2 |=[Phi]  P1 => P2 .
+  red P2 |=[Phi]  P1 => (P1 => P2).
+  red true |=[Phi]    false => P1 .
+  close
+
+  open META3 .
+  op all-X_ : Sen -> Sen .
+  ops A1 A2 P1 P2 : -> Sen .
+  op Phi : -> Sig .
+  var A : Sen .
+  eq all-X A = (all 'x : 'Elt (all 'y : 'Elt (all 'z : 'Elt A))).
+  red (A1 and A2) |=[Phi] (all-X (P1 => P2)) .
+  close
+
+  open R* .
+  vars-of .
+  ops x y z : -> Elt .
+  var B : Bool .
+  op _cand_ : Bool Bool -> Bool [strategy (1 0)] .
+  eq false cand B = false .
+  eq true  cand B = B .
+  cq X R* Z = true if (Z =/= y and X =/= y) cand (X R* y and y R* Z) .
+  eq x R  y = true .
+  eq y R* z = true .
+  red x R* z .
+  close
+
+in /home/goguen/obj/prop/propc
+
+  obj INT is sorts Int Nat .
+    subsort Nat < Int .
+    ops 0 1 2 : -> Nat .
+    op s_ : Nat -> Nat [prec 1] .
+    ops (s_)(p_) : Int -> Int [prec 1] .
+    op (_+_) : Nat Nat -> Nat [assoc comm prec 3] .
+    op (_+_) : Int Int -> Int [assoc comm prec 3] .
+    op (_*_) : Nat Nat -> Nat [assoc comm prec 2] .
+    op (_*_) : Int Int -> Int [assoc comm prec 2] .
+    op (_-_) : Int Int -> Int [prec 4] .
+    op -_ : Int -> Int [prec 1] .
+    vars I J K : Int .
+    eq 1 = s 0 .  eq 2 = s 1 .
+    eq s p I = I .
+    eq p s I = I .
+    eq I + 0 = I .
+    eq I + s J = s(I + J) .
+    eq I + p J = p(I + J) .
+    eq I * 0 = 0 .
+    eq I * s J = I * J + I .
+    eq I * p J = I * J - I .
+    eq I * (J + K) = I * J + I * K .
+    eq - 0 = 0 .  
+    eq - - I = I .
+    eq - s I = p - I .
+    eq - p I = s - I .
+    eq I - J = I + - J .
+    eq I + - I = 0 .
+    eq -(I + J) = - I - J .
+    eq I * - J = -(I * J) .
+    op 2**_ : Nat -> Nat [prec 1] .
+    var N : Nat .
+    eq 2** 0 = 1 .
+    eq 2** s N = 2** N * 2 .
+  endo
+
+  obj BUS is sort Bus .
+    extending PROPC + INT .
+    subsort Prop < Bus .
+    op __ : Prop Bus -> Bus .
+    op |_| : Bus -> Nat .
+    var B : Prop .   var W : Bus .
+    eq | B | = 1 .
+    eq | B W | = s | W | .
+    op #_ : Bus -> Int [prec 1] .  *** is really -> Nat
+    eq # false = 0 .
+    eq # true = 1 .
+    eq #(B W) = 2** | W | * # B + # W .
+  endo
+
+  ***> full adder
+  obj FADD is extending PROPC .
+    ops cout sout : Prop Prop Prop -> Prop .
+    vars I1 I2 C : Prop .
+    eq sout(I1,I2,C) =  I1 xor I2 xor C .
+    eq cout(I1,I2,C) = I1 and I2 xor I1 and C xor I2 and C .
+  endo
+
+  ***> n-bit ripple carry adder
+  obj NADD is protecting FADD + BUS .
+    ops cout sout : Bus Bus -> Prop .
+    op sout* : Bus Bus -> Bus .
+    vars B1 B2 : Prop .   vars W1 W2 : Bus .
+    eq cout(B1,B2) = cout(B1,B2,false) .
+    eq sout(B1,B2) = sout(B1,B2,false) .
+    eq cout(B1 W1,B2 W2) = cout(B1,B2,cout(W1,W2)) .
+    eq sout(B1 W1,B2 W2) = sout(B1,B2,cout(W1,W2)) .
+    eq sout*(B1,B2) = sout(B1,B2) .
+    eq sout*(B1 W1,B2 W2) = sout(B1 W1,B2 W2) sout*(W1,W2) .
+  endo
+
+  obj LEMMAS is protecting NADD .
+    vars B1 B2 : Prop .
+    eq #(B1 and B2) = # B1 * # B2 .
+    eq #(B1 xor B2) = # B1 + # B2 - #(B1 and B2)* 2 .
+       *** would write up if # : Bus -> Nat .
+    vars W1 W2 : Bus .
+    ceq | sout*(W1,W2)| = | W1 | if | W1 | == | W2 | .
+  endo
+
+  ******************************************************
+  ***
+  *** comment by Kai
+  *** this rewriting system is not confluent
+  *** because
+  ***     #(b xor b) => #(false)
+  ***                => 0
+  ***     #(b xor b) => #b + #b - #(b and b) * 2
+  ***                => #b + #b - #b * #b * 2
+  *** actually we need the following equation:
+  ***     eq #B1 * #B1 = #B1 .
+  *** by the way, OBJ3 get the correct result even this
+  *** rewriting system is not confluent
+  ***
+  *******************************************************
+
+  ***> base case
+  open LEMMAS .
+    ops b1 b2 : -> Prop .  
+    reduce # sout*(b1,b2)+ # cout(b1,b2)* 2 == # b1 + # b2 .
+  close
+
+  ***> induction step
+  open LEMMAS .
+    ops b1 b2 : -> Prop .
+    ops w1 w2 : -> Bus .
+    op n : -> Nat .
+    eq | w1 | = n .
+    eq | w2 | = n .
+    eq # sout*(w1,w2) + 2** n * # cout(w1,w2) = # w1 + # w2 .
+
+    show time .
+
+    red # sout*(b1 w1,b2 w2) + 2** | b1 w1 | * # cout(b1 w1,b2 w2) ==
+        #(b1 w1) + #(b2 w2).
+  close
+
+  show time .
+
+  obj META4 is pr META3 .
+    vars A P Q : Sen .  var X : Id .  var T : BType .  var S : Sig .
+    op (exist_:_ _) : Id BType Sen -> Sen .
+    eq A and (exist X : T P) |=[S] Q  =  A and P |=[S][X : T] Q .  
+  endo
+
+  obj META5 is pr META4 .
+    vars A P : Sen .  var y : Id .  var T : BType .  var S : Sig .
+    op all-X_ : Sen -> Sen .
+    op Eqt : Id -> Sen .
+    eq A |=[S] (all-X (exist y : T P))  =  A and Eqt(y) |=[S][y : T] (all-X P).
+    *** where Eqt(y) is the equation y = t
+    *** and all-X is one or more universal quantifier
+  endo
+
+  open META5 .
+  ops INT P1 P2 : -> Sen .
+  op Phi : -> Sig .
+  op Int : -> BType .
+  var A : Sen .
+  red INT |=[Phi] (all-X (exist 'z : Int (exist 'w : Int (P1 and P2)))) .
+  call-that t .
+  eq all-X A = (all 'x : Int (all 'y : Int A)).
+  red t .
+  close
+
+openr INT . let 3 = s 2 . let 4 = s 3 . let 5 = s 4 .
+close
+
+  open INT .
+  ops x y z w : -> Int .
+  eq w = x + (2 * y) - 3 .
+  eq z = x + y + 1 .
+  red x - w + (2 * y) == 3 .
+  red x + w           == (2 * z) - 5 .
+  close
+
+  open META4 + NAT .
+  op NAT : -> Sen .
+  op NATSIG : -> Sig .
+  ops 'a 'b : -> NzNat .
+  op eq : Nat Nat -> Sen .
+  let P = eq('a * 'a * 2, 'b * 'b).
+  red NAT |=[NATSIG] not (exist 'a : 'NzNat (exist 'b : 'NzNat P)).
+  close
+
+  obj NAT is
+    sorts Nat NzNat Zero .
+    subsorts Zero NzNat < Nat .
+    op 0 : -> Zero .
+    op s_ : Nat -> NzNat .
+    op p_ : NzNat -> Nat .
+    op _+_ : Nat Nat -> Nat [assoc comm] .
+    op _+_ : NzNat NzNat -> NzNat [assoc comm] .
+    op _*_ : Nat Nat -> Nat [assoc comm].
+    op _*_ : NzNat NzNat -> NzNat [assoc comm].
+    op _>_ : Nat Nat -> Bool .
+    op d : Nat Nat -> Nat [comm] .
+    op quot : Nat NzNat -> Nat .
+    op quot : NzNat NzNat -> NzNat .
+    op gcd : NzNat NzNat -> NzNat [comm] .
+    vars N M : Nat .   vars N' M' : NzNat .
+    eq p s N = N .
+    eq N + 0 = N .
+    eq (s N) + M = s(N + M) .
+    eq N * 0 = 0 .
+    eq N * (s M) = (N * M) + N .
+    eq 0 > M = false .
+    eq N' > 0 = true . 
+    eq s N > s M = N > M .
+    eq d(0,N) = N .
+    eq d(s N, s M) = d(N,M) .
+    eq quot(N,M') = if ((N > M') or (N == M')) then s quot(d(N,M'),M') 
+       else 0 fi .
+    eq gcd(N',M') = if N' == M' then N' else (if N' > M' then 
+       gcd(d(N',M'),M') else gcd(N',d(N',M')) fi) fi .
+  endo
+
+  obj ListOfNat is pr NAT .
+    sort List .
+    subsort NzNat < List .
+    op nil : -> List .
+    op __ : List List -> List [assoc id: nil].
+  endo
+  openr NAT . let 1 = s 0 . let 2 = s 1 . let 3 = s 2 . let 4 = s 3 .
+  let 5 = s 4 . let 6 = s 5 . let 7 = s 6 . let 8 = s 7 . let 9 = s 8 .
+  let 10 = s 9 . let 11 = s 10 . let 12 = s 11 . let 13 = s 12 . 
+  let 14 = s 13 .  close
+
+  show time .
+
+  obj PRIME is pr NAT .
+    op _|_ : NzNat NzNat -> Bool .
+    op prime : NzNat -> Bool [memo].
+    op prime : NzNat NzNat -> Bool [memo].
+    vars N M : NzNat .
+    eq N | M = gcd(N,M) == N .
+    eq prime(s 0) = false .
+    cq prime(N) = prime(N,p N) if N > s 0 .
+    eq prime(N, s 0) = true .
+    cq prime(N,M) = false if M > s 0 and M | N .
+    cq prime(N,M) = prime(N,p M) if M > s 0 and not M | N .
+  endo
+
+  obj PRIME-DIVISORS is pr PRIME + ListOfNat .
+    op pr-div : NzNat -> List .
+    op pr-div : NzNat Nat -> List .
+    vars N P M : NzNat .  var L : List .
+    eq pr-div(s 0)   = nil .
+    cq pr-div(P)     = P if prime(P) .
+    cq pr-div(N * P) = pr-div(N)       if P | N .
+    cq pr-div(N * P) = P pr-div(N)     if prime(P) and not P | N .
+    cq pr-div(M)     = pr-div(M,M)     if not prime(M) .
+    eq pr-div(N,s 0) = nil .
+    cq pr-div(N,P)   = P pr-div(N,p P) if P > s 0 and prime(P) and P | N .
+    cq pr-div(N,P)   = pr-div(N,p P)   if P > s 0 and not (prime(P) and P | N).
+    ops Pi Pip  : List -> NzNat .
+    eq Pi(nil)  = s 0 .
+    eq Pi(N L)  = N * Pi(L) .
+    eq Pip(nil) = s 0 .
+    eq Pip(N L) = (p N) * Pip(L) .
+  endo
+
+  obj EULER is pr PRIME-DIVISORS .
+    op phi : NzNat -> NzNat .
+    vars N P : NzNat .
+    eq phi(s 0) = s 0 .
+    cq phi(N * P) = phi(N) * P   if prime(P) and P | N .
+    cq phi(N * P) = phi(N) * p P if prime(P) and not P | N .
+  endo
+
+  ***> Prove phi(N) * Pi(pr-div(N)) == N * Pip(pr-div(N)) for each N:NzNat
+  ***> First show the formula for N = 1
+  red phi(1) * Pi(pr-div(1)) == 1 * Pip(pr-div(1)) .
+  ***> and introduce the basic constants and assumptions
+  openr .
+  ops n q pq : -> NzNat .
+  eq prime(q) = true .
+  eq p q = pq .
+  close
+
+  ***> Then suppose the property for n and prove it for n * q
+  openr .
+  eq phi(n) * Pi(pr-div(n)) = n * Pip(pr-div(n)) .
+  close
+  ***> Case where q | n
+  open .
+  eq q | n = true .
+  red phi(n * q) * Pi(pr-div(n * q)) == n * q * Pip(pr-div(n * q)) .
+  close
+  ***> Case where not q | n
+  open .
+  eq q | n = false .
+  red phi(n * q) * Pi(pr-div(n * q)) == n * q * Pip(pr-div(n * q)) .
+  close
+
+  show time .
+
+  openr INT .
+  op _>_ : Int Int -> Bool .
+  vars-of .
+  eq s I > I = true .
+  eq I > p I = true .
+  eq s I > s J = I > J .
+  vars M N : Nat .
+  eq 0 > M = false .
+  eq s M > 0 = true .
+  *** some lemmas 
+  eq I + J + (- J) = I .
+  eq I + J + (- I) = J .
+  cq I + J > I = true if I > 0 and J > 0 .
+  cq I + J > J = true if I > 0 and J > 0 .
+  cq I + J > 0 = true if I > 0 and J > 0 .
+close
+
+obj 2NAT is sorts 2Nat 2Int .
+  pr INT .
+  subsort 2Nat < 2Int .
+  op <_,_> : Nat Nat -> 2Nat .
+  op <_,_> : Int Int -> 2Int .
+  ops p1 p2 : 2Nat -> Nat .
+  ops p1 p2 : 2Int -> Int .
+  vars M N : Int .
+  eq p1(< M, N >) = M .
+  eq p2(< M, N >) = N .
+endo
+
+obj GCD is pr 2NAT .
+  op gcd_ : 2Int -> Int .
+  vars M N : Int .
+  eq gcd < 0, N > = N .
+  eq gcd < M, 0 > = M .
+  eq gcd < M, M > = M .
+  cq gcd < M, N > = gcd(< M - N, N >) if M > N and N > 0 .
+  cq gcd < M, N > = gcd(< M, N - M >) if N > M and M > 0 .
+endo
+
+openr GCD .
+ops m n : -> Nat .
+*** base cases:
+red gcd < m,0 > == gcd < 0,m > .
+red gcd < 0,n > == gcd < n,0 > .
+*** for the induction steps:
+eq m > 0 = true .
+eq n > 0 = true .
+close
+
+*** induction step computations:
+open .
+eq  gcd < m, n > = gcd < n, m > .  *** induction hypothesis:
+red gcd < m, m + n > == gcd < m + n, m > .
+close
+
+open .
+eq  gcd < n, m > = gcd < m, n > .  *** induction hypothesis:
+red gcd < m + n, n > == gcd < n, m + n > .
+close
+
+  obj SEQ is pr NAT .
+    op even_ : Nat -> Bool .
+    var N : Nat .
+    eq even   0 = true .
+    eq even s 0 = false .
+    eq even s s N = even N .
+    op div2_ : Nat -> Nat .
+    eq div2 0 = 0 .
+    eq div2 s 0 = 0 .
+    eq div2 s s N = s div2 N .
+    op f_ : Nat -> Nat .
+    eq f 0 = 0 .
+    eq f s 0 = 0 .
+    cq f s N = 3 * f(div2 N) + 2 if N > 0 .
+  endo
+
+  *****************************************************
+  *** comment by Kai
+  ***
+  *** should get multiple parse result for 3 * f(div2 N) + 2
+  *** e.g
+  ***       3 * f ((div2 N) + 2)
+  ***       3 * ((f(div2 N)) + 2)
+  *** "pred" must be defined  
+  *****************************************************
+
+  openr SEQ .
+    vars N M : Nat .
+    cq s N > M = true if N > M .
+    cq even(N + M) = true if even N and even M .
+    cq even(N * M) = true if even M .
+    cq N > div2 N = true if N > 0 .
+    op n : -> Nat .
+    eq n > s 0 = true .
+    eq n >   0 = true .
+    cq even f N = true if s n > N .
+  close
+
+red even f 0 .
+red even f 1 .
+red even f s n .
+

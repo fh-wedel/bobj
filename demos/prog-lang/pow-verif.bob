@@ -1,0 +1,181 @@
+
+
+obj NAT is sort Nat .
+  op 0 : -> Nat .
+  op s_ : Nat -> Nat [prec 1] .
+endo
+
+
+obj NATOPS is pr NAT .
+  op 1 : -> Nat .
+  eq 1 = s 0 .
+
+  op _+_ : Nat Nat -> Nat [assoc comm prec 3] .
+  vars M N : Nat .
+  eq  M + 0  =  M .
+  eq  M + s N  =  s(M + N) .
+
+  op _*_ : Nat Nat -> Nat [assoc comm prec 2] .
+  eq  M * 0  =  0 .
+  eq  M * s N  =  M * N + M .
+
+  op _**_ : Nat Nat -> Nat [prec 4] .
+  eq  M ** 0  =  1 .
+  eq  M ** s N  =  (M ** N) * M .
+
+  op _-_ : Nat Nat -> Nat .
+  eq  M - 0  =  M .
+  eq  0 - M  =  0 .
+  eq  s M - s N  =  M - N .
+
+  op _%2 : Nat -> Nat [prec 10] .
+  eq  0 %2  =  0 .
+  eq  s 0 %2  =  0 .
+  eq  s s N %2  =  s(N %2) .
+
+  op even_ : Nat -> Bool  [prec 10] .
+  eq  even 0  =  true .
+  eq  even s 0  =  false .
+  eq  even s s M  =  even M .
+
+  op pos_ : Nat -> Bool .
+  eq  pos 0  =  false .
+  eq  pos s N  =  true .
+
+  [lemma1] cq (N * N)**(M %2) = N ** M if even M .
+  [lemma2] cq N *(N **(M - s 0)) = N ** M if pos M .
+endo
+
+
+th STORE is pr NATOPS .
+            pr BOOL .
+            pr QID *(sort Id to Var) .
+  sort Store .
+  op initial : -> Store .
+  op _[[_]] : Store Var -> Nat .
+  op (_;_:_) : Store Var Nat -> Store .
+
+  vars X Y : Var .
+  var S : Store .
+  var N : Nat .
+
+  eq  initial [[X]]  =  0 .
+  eq  S ; X : N [[X]]  =  N .
+  cq  S ; X : N [[Y]]  =  S[[Y]] if X =/= Y .
+endth
+
+
+obj EXP is pr STORE .
+  sorts Exp Bexp .
+  subsorts Nat Var < Exp .
+  subsorts Bool < Bexp .
+
+  op _*_ : Exp Exp -> Exp .
+  op _-_ : Exp Exp -> Exp .
+  op _%2 : Exp -> Exp .
+  op even_ : Exp -> Bexp .
+  op pos_ : Exp -> Bexp .
+
+  op _[[_]] : Store Exp -> Nat .
+  op _[[_]] : Store Bexp -> Bool .
+
+  var S : Store .
+  var N : Nat .
+  var B : Bool .
+  vars E E' : Exp .
+
+  eq  S[[N]]  =  N . 
+  eq  S[[E * E']]  =  S[[E]] * S[[E']] .
+  eq  S[[E - E']]  =  S[[E]] - S[[E']] .
+  eq  S[[E  %2]]   =  S[[E]] %2 .
+
+  eq  S[[B]]  =  B .
+  eq  S[[even E]]  =  even(S[[E]]) .
+  eq  S[[pos E]]   =  pos(S[[E]]) .
+endo
+
+
+obj PGM is pr EXP .
+           ex STORE .
+  sort Pgm .
+
+  op _:=_ : Var Exp -> Pgm .
+  op _;_ : Pgm Pgm -> Pgm [assoc prec 50] .
+  op if_then_else_fi : Bexp Pgm Pgm -> Pgm .
+  op while_do_od : Bexp Pgm -> Pgm .
+
+  op _;_ : Store Pgm -> Store .
+
+  var S : Store .
+  var X : Var .  
+  var E : Exp .
+  var BX : Bexp .
+  vars P P' : Pgm .
+
+  eq  S ; (X := E)  =  S ; X : S[[E]] .
+  eq  S ; (P ; P') =  (S ; P); P' .
+  eq  S ; if BX then P else P' fi  =  if S[[BX]]
+                                      then  S ; P
+                                      else  S ; P'  fi .
+  eq  S ; while BX do P od  =  if S[[BX]]
+                               then  S ; P ; while BX do P od
+                               else  S  fi .
+endo
+
+
+***> the program:
+obj POW is pr PGM .
+  ops a0 b0 : -> Nat .
+
+  let init  = 'A := a0 ; 'B := b0 ; 'C := 1 .
+  let step  = 'B := 'B - 1 ; 'C := 'C * 'A .
+  let inner = 'A := 'A * 'A ; 'B := 'B %2 .
+  let outer = while even 'B do inner od ; step .
+  let pow   = init ; while pos 'B do outer od .
+endo
+
+
+red pow .
+
+
+***> example:
+open POW .
+eq a0 = s s 0 .
+eq b0 = s s s 0 .
+red initial ; pow [['C]] .  ***> should be: 8
+close
+
+
+***> the verification:
+openr POW .
+
+***> the invariant:
+op inv : Store -> Bool .
+var S : Store .
+eq  inv(S)  =  ((S[['A]]) ** (S[['B]])) * (S[['C]]) == a0 ** b0 .
+
+***> init
+op s : -> Store .
+red inv(s ; init).  ***> should be: true
+
+ops a b c : -> Nat .
+eq s[['A]] = a .
+eq s[['B]] = b .
+eq s[['C]] = c .
+close
+
+
+open POW .
+eq (a ** b)* c = a0 ** b0 .
+eq pos b = true .
+eq even b = true .
+red inv(s ; inner).  ***> should be: true
+close 
+
+
+open POW .
+eq (a ** b)* c = a0 ** b0 .
+eq even b = false .  ***> therefore [lemma3]:
+eq pos b = true .
+red inv(s ; step) .  ***> should be: true
+close

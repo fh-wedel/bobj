@@ -1,0 +1,14 @@
+
+obj EVEN is
+   pr NAT .
+   sort Even .
+   subsort Even < Nat .
+   op even : Nat -> Bool .
+   var N : Nat .
+   eq r:Nat>Even(N) = ~setsort~(Even, N) if even(N) .
+   eq even(2) = true .
+   eq even(1) = true .
+end
+
+
+red r:Nat>Even(2) .

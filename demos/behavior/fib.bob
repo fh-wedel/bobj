@@ -1,0 +1,52 @@
+th D-TRIV is 
+  sort Data . 
+end
+
+bth STREAM[X :: D-TRIV] is sort Stream .
+  op head : Stream -> Data .
+  op tail : Stream -> Stream .
+  op _&_  : Data Stream -> Stream .
+  var D : Data .  var S : Stream .
+  eq head(D & S) = D .
+  eq tail(D & S) = S .
+end
+
+bth ZIP[X :: D-TRIV] is pr STREAM[X] .
+  op zip  : Stream Stream -> Stream .
+  vars S S' : Stream .
+  eq head(zip(S,S')) = head(S) .
+  eq tail(zip(S,S')) = zip(S',tail(S)) .
+end
+
+dth FIBO-NAT is pr NAT .
+  var N : Nat .
+  op f : Nat -> Nat .
+  eq f(0) = 0 .     eq f(1) = 1 .
+  eq f(N + 2) = f(N + 1) + f(N) .
+end
+
+bth FIBO-STREAM is pr ZIP[FIBO-NAT] .
+  var N : Nat .  var S : Stream .
+  op nat : Nat -> Stream .
+  eq head(nat(N)) = N .
+  eq tail(nat(N)) = nat(N + 1) .
+
+  op f : Stream -> Stream .
+  eq head(f(S)) = f(head(S)) .
+  eq tail(f(S)) = f(tail(S)) .
+
+  op fib : Nat -> Stream .
+  eq fib(N) = f(nat(N)) .
+
+  op add : Stream -> Stream .
+  eq head(add(S)) = head(S) + head(tail(S)) .
+  eq tail(add(S)) = add(tail(tail(S))) .
+
+  op fib' : Nat -> Stream .
+  eq head(fib'(N))       = f(N) .
+  eq head(tail(fib'(N))) = f(N + 1) .
+  eq tail(tail(fib'(N))) = add(zip(fib'(N),tail(fib'(N)))) .
+end
+
+
+cred fib(N) == fib'(N) .

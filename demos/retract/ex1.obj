@@ -1,0 +1,232 @@
+  ***> file: ~goguen/sd/pa/ftp97.tex
+  *** set show retracts on .
+
+  obj PNAT is sort Nat .
+    op 0 : -> Nat .
+    op s_  : Nat -> Nat [prec 2].
+    op _+_ : Nat Nat -> Nat [comm]. ***[assoc comm].
+    op _*_ : Nat Nat -> Nat [comm]. ***[assoc comm].
+    op _<=_ : Nat Nat -> Bool .
+    vars N M : Nat .
+    eq 0 + N = N .
+    eq (s N) + M = s(N + M) .
+    eq 0 * N = 0 .
+    eq (s N) * M = (N * M) + M .
+    eq N <= 0 = N == 0 .
+    eq 0 <= N = true .
+    eq (s N) <= (s M) = N <= M .
+  endo
+
+  obj PNATM is pr PNAT .
+    sorts Nat? Bool? .
+    subsort Nat < Nat? .
+    subsort Bool < Bool? .
+    op s_  : Nat? -> Nat? [prec 2].
+    op _+_ : Nat? Nat? -> Nat? .
+    op _*_ : Nat? Nat? -> Nat? .
+    op _<=_ : Nat? Nat? -> Bool? .
+    op _-_ : Nat Nat -> Nat? .
+    vars N M : Nat .
+    eq N - 0 = N .
+    cq s N - s M = N - M if M <= N .
+  endo
+
+  ***> first lemma: N - N = 0
+  obj SETUP is pr PNATM .  *** constants plus basic lemmas
+    ops l m n : -> Nat .
+    vars L M N : Nat .
+    eq M <= M = true .
+***    eq N + 0 = N .
+  endo
+  open .  *** base case
+    eq n = 0 .
+    red n - n == 0 .
+  close
+  open .  *** induction step
+    vars-of .
+    cq M - M = 0 if M <= n . *** induction hypothesis
+    eq m <= n = true .
+    red (s m) - s m == 0 .
+  close
+
+  ***> last lemma: M <= N - L = true if L + M <= N .
+  obj SETUP is pr PNATM .  *** constants plus basic lemmas
+    ops l m n : -> Nat .
+    vars L M N : Nat . var E : Nat? .
+    eq M <= M = true .
+    eq M - M = 0 .
+    cq s N - M = s(N - M) if M <= N .
+    eq (N + M) - N = M .
+    cq N <= s E = true if N <= E .
+  endo
+
+  open .  *** base case
+    eq n = 0 .
+    *** and because l + m <= 0 = true, we have
+    eq l = 0 .  eq m = 0 .
+    red m <= n - l .
+  close
+
+  openr .  *** induction step
+    vars L M N : Nat .
+    cq M <= n - L = true if L + M <= n . *** induction hypothesis
+    eq l + m <= s n = true .
+  close
+  open .  *** first case:
+    eq l + m <= n = true . *** thus:
+    eq l <= n = true .
+    red m <= s n - l .
+  close
+  open .  *** second case:
+    eq s n = l + m .
+    red m <= s n - l .
+  close
+
+  ***> main result: N - (L + M) = (N - L) - M If L + M <= N .
+  obj SETUP is pr PNATM .  *** constants plus basic lemmas
+    ops l m n : -> Nat .
+    vars L M N : Nat . var E : Nat? .
+    eq N - N = 0 .
+    cq s N - M = s(N - M) if M <= N .
+    eq (L + M) - L = M .
+    cq M <= N - L = true if L + M <= N .
+    eq r:Nat?>Nat(s E) = s r:Nat?>Nat(E) .
+    cq s(r:Nat?>Nat(E) - N) = (s r:Nat?>Nat(E)) - N if N <= E .
+  endo
+
+  open .  *** base case
+    eq n = 0 .
+    *** and because l + m <= 0 = true, we have
+    eq l = 0 .  eq m = 0 .
+    red n -(l + m) == (n - l) - m .
+  close
+
+  openr .  *** induction step
+    vars-of .
+    cq n - (L + M) = (n - L) - M if L + M <= n . *** induction hypothesis
+    eq l + m <= s n = true .
+  close
+  open .  *** first case:
+    eq l + m <= n = true  .  *** thus:
+    eq l <= n = true .
+    red s n - (l + m) == (s n - l) - m .
+  close
+  open .  *** second case:
+    eq s n = l + m .
+    red s n - (l + m) == (s n - l) - m .
+  close
+
+  ***> to add to file: ~goguen/sd/pa/ftp97.tex
+  ***> show: (L+M)-L = M
+  *** set show retracts on .
+
+  obj PNAT is sort Nat .
+    op 0 : -> Nat .
+    op s_  : Nat -> Nat [prec 2].
+    op _+_ : Nat Nat -> Nat [assoc comm].
+    op _*_ : Nat Nat -> Nat [assoc comm].
+    op _<=_ : Nat Nat -> Bool .
+    vars N M : Nat .
+    eq 0 + N = N .
+    eq (s N) + M = s(N + M) .
+    eq 0 * N = 0 .
+    eq (s N) * M = (N * M) + M .
+    eq N <= 0 = N == 0 .
+    eq 0 <= N = true .
+    eq (s N) <= (s M) = N <= M .
+  endo
+
+  obj PNATM is pr PNAT .
+    sorts Nat? Bool? .
+    subsort Nat < Nat? .
+    subsort Bool < Bool? .
+    op s_  : Nat? -> Nat? [prec 2].
+    op _+_ : Nat? Nat? -> Nat? .
+    op _*_ : Nat? Nat? -> Nat? .
+    op _<=_ : Nat? Nat? -> Bool? .
+    op _-_ : Nat Nat -> Nat? .
+    vars N M : Nat .
+    eq N - 0 = N .
+    cq s N - s M = N - M if M <= N .
+  endo
+
+  obj SETUP is pr PNATM .  *** constants plus basic lemmas
+    ops l m n : -> Nat .
+    vars L M N : Nat .
+    eq M <= M = true .
+    eq s(M + N) <= M = true .
+    eq M - M = 0 .
+    cq s N - M = s(N - M) if M <= N .
+  endo
+
+  *** proof by induction on M
+  open .  *** base case
+    eq m = 0 .
+    red (l + m) - l == m .
+  close
+  open .  *** induction step
+    vars-of .
+    cq (L + M) - L = M if M <= m . *** induction hypothesis
+    eq n <= m = true .
+    red (l + s n) - l == s n .
+    red (l + s n) - l .
+    red (l + s n) <= l .
+  close
+
+
+  ***> to add to file: ~goguen/sd/pa/ftp97.tex
+  ***> show: (sN)-M = s(N-M)
+  *** set show retracts on .
+
+  obj PNAT is sort Nat .
+    op 0 : -> Nat .
+    op s_  : Nat -> Nat [prec 2].
+    op _+_ : Nat Nat -> Nat [assoc comm].
+    op _*_ : Nat Nat -> Nat [assoc comm].
+    op _<=_ : Nat Nat -> Bool .
+    vars N M : Nat .
+    eq 0 + N = N .
+    eq (s N) + M = s(N + M) .
+    eq 0 * N = 0 .
+    eq (s N) * M = (N * M) + M .
+    eq N <= 0 = N == 0 .
+    eq 0 <= N = true .
+    eq (s N) <= (s M) = N <= M .
+  endo
+
+  obj PNATM is pr PNAT .
+    sorts Nat? Bool? .
+    subsort Nat < Nat? .
+    subsort Bool < Bool? .
+    op s_  : Nat? -> Nat? [prec 2].
+    op _+_ : Nat? Nat? -> Nat? .
+    op _*_ : Nat? Nat? -> Nat? .
+    op _<=_ : Nat? Nat? -> Bool? .
+    op _-_ : Nat Nat -> Nat? .
+    vars N M : Nat .
+    eq N - 0 = N .
+    cq s N - s M = N - M if M <= N .
+  endo
+
+  obj SETUP is pr PNATM .  *** constants plus basic lemmas
+    ops l m n : -> Nat .
+    vars L M N : Nat .
+    eq M <= M = true .
+    eq M - M = 0 .
+  endo
+
+  *** proof by induction on M
+  open .  *** base case
+    eq m = 0 .
+    red (l + 0) - l == 0 .
+  close
+  open .  *** induction step
+    vars-of .
+    cq (L + M) - L = M if M <= m . *** induction hypothesis
+    eq n <= m = true .
+    red (l + s n) - l == s n .
+    red (l + s n) - l .
+  close
+
+
+
