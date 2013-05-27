@@ -419,9 +419,9 @@ public class Subsort  implements Serializable {
 
     public Object clone() {
 	Subsort result = new Subsort();
-	Enumeration enum = this.subsorts.keys();
-	while (enum.hasMoreElements()) {
-	    Sort sort = (Sort)enum.nextElement();
+	Enumeration enum_ = this.subsorts.keys();
+	while (enum_.hasMoreElements()) {
+	    Sort sort = (Sort)enum_.nextElement();
 	    Vector vec = (Vector)this.subsorts.get(sort);
 	    vec = (Vector)vec.clone();
 	    result.subsorts.put(sort, vec);

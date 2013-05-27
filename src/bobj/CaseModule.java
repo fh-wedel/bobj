@@ -7,8 +7,8 @@ public class CaseModule extends Module
 {
     ModuleName name, base;
     Term context, cond;
-    ArrayList cases;
-    ArrayList labels;
+    ArrayList<ArrayList> cases;
+    ArrayList<String> labels;
     static String errMsg;
     int handledCases, failedCases;
         
@@ -23,12 +23,12 @@ public class CaseModule extends Module
 	this.context = mod.context;
 		
 	// check and input variables
-	ArrayList tmpCases = new ArrayList();
+	ArrayList<ArrayList<ArrayList>> tmpCases = new ArrayList<ArrayList<ArrayList>>();
 	tmpCases.add(mod.cases);
 
-	ArrayList tmpLabels = new ArrayList();
+	ArrayList<ArrayList<String>> tmpLabels = new ArrayList<ArrayList<String>>();
 	if (mod.labels.size() == 0) {
-	    ArrayList tmp = new ArrayList();
+	    ArrayList<String> tmp = new ArrayList<String>();
 	    for (int i=0; i<mod.cases.size(); i++) {
 		tmp.add(String.valueOf(i+1));
 	    }
@@ -75,7 +75,7 @@ public class CaseModule extends Module
 
 	    tmpCases.add(mod.cases);
 	    if (mod.labels.size() == 0) {
-		ArrayList tmp = new ArrayList();
+		ArrayList<String> tmp = new ArrayList<String>();
 		for (int j=0; j<mod.cases.size(); j++) {
 		    tmp.add(String.valueOf(j+1));
 		}
@@ -85,7 +85,7 @@ public class CaseModule extends Module
 	    }
 	}
 
-	ArrayList resLabels = new ArrayList();
+	ArrayList<String> resLabels = new ArrayList<String>();
 	this.cases = makeCases(tmpCases, tmpLabels, resLabels);
 	this.labels = resLabels;
 	
@@ -98,8 +98,8 @@ public class CaseModule extends Module
 	
 	this.name = name;
 	this.base = module.modName;
-	this.cases = new ArrayList();
-	this.labels = new ArrayList();
+	this.cases = new ArrayList<ArrayList>();
+	this.labels = new ArrayList<String>();
 	
 	Module tmp = (Module)module.clone();
 
@@ -124,17 +124,17 @@ public class CaseModule extends Module
 	this.extendImportList = (ArrayList)(tmp.extendImportList.clone());
 	this.useImportList = (ArrayList)(tmp.useImportList.clone());
 	
-	this.equations = new ArrayList();
-	Iterator itor = tmp.equations.iterator();
+	this.equations = new ArrayList<Equation>();
+	Iterator<Equation> itor = tmp.equations.iterator();
 	while (itor.hasNext()) {
-	    Equation eq = (Equation)itor.next();
+	    Equation eq = itor.next();
 	    this.equations.add(eq);
 	}
 
-	this.generalEquations = new ArrayList();
+	this.generalEquations = new ArrayList<Equation>();
 	itor = tmp.generalEquations.iterator();
 	while (itor.hasNext()) {
-	    Equation eq = (Equation)itor.next();
+	    Equation eq = itor.next();
 	    this.generalEquations.add(eq);
 	}	
 	
@@ -188,7 +188,7 @@ public class CaseModule extends Module
 		result += "   case \n";
 	    }
 
-	    ArrayList list = (ArrayList)cases.get(i);
+	    ArrayList list = cases.get(i);
 	    for (int j=0; j<list.size(); j++) {
                 Object obj = list.get(j);
 		if (obj instanceof Operation) {
@@ -206,37 +206,37 @@ public class CaseModule extends Module
     }
 
 
-    private ArrayList makeCases(ArrayList list,
-				ArrayList llist,
-				ArrayList res) 
+    private ArrayList<ArrayList> makeCases(ArrayList<ArrayList<ArrayList>> list,
+				ArrayList<ArrayList<String>> llist,
+				ArrayList<String> res) 
     {
 	    
-	ArrayList result = new ArrayList();
+	ArrayList<ArrayList> result = new ArrayList<ArrayList>();
 	
 	if (list.size() == 1) {
-	    ArrayList tmp = (ArrayList)list.get(0);
-	    result = (ArrayList)tmp.clone();
+	    ArrayList<ArrayList> tmp = list.get(0);
+	    result = (ArrayList<ArrayList>)tmp.clone();
 
-	    ArrayList ltmp = (ArrayList)llist.get(0);
+	    ArrayList<String> ltmp = llist.get(0);
 	    res.addAll(ltmp);
 
 	    return result;
 	}
 
-	ArrayList copy = (ArrayList)list.clone();
-	ArrayList first = (ArrayList)copy.get(0);
+	ArrayList<ArrayList<ArrayList>> copy = (ArrayList<ArrayList<ArrayList>>)list.clone();
+	ArrayList first = copy.get(0);
 	copy.remove(0);
 
-	ArrayList lcopy = (ArrayList)llist.clone();
-	ArrayList lfirst = (ArrayList)lcopy.get(0);
+	ArrayList<ArrayList<String>> lcopy = (ArrayList<ArrayList<String>>)llist.clone();
+	ArrayList lfirst = lcopy.get(0);
 	lcopy.remove(0);
 		
-	ArrayList ltmp = new ArrayList();
-	ArrayList tmp = makeCases(copy, lcopy, ltmp);
+	ArrayList<String> ltmp = new ArrayList<String>();
+	ArrayList<ArrayList> tmp = makeCases(copy, lcopy, ltmp);
         for (int i=0; i<first.size(); i++) {
 	    for (int j=0; j<tmp.size(); j++) {
 		ArrayList element = (ArrayList)first.get(i);
-		ArrayList aCase = (ArrayList)tmp.get(j);
+		ArrayList aCase = tmp.get(j);
 		ArrayList mid = new ArrayList();
 		mid.addAll(element);
 		mid.addAll(aCase);
@@ -247,7 +247,7 @@ public class CaseModule extends Module
         for (int i=0; i<lfirst.size(); i++) {
 	    for (int j=0; j<ltmp.size(); j++) {
 		String aStr = (String)lfirst.get(i);
-		String bStr = (String)ltmp.get(j);
+		String bStr = ltmp.get(j);
 		res.add(aStr+","+bStr);
 	    }
 	}
@@ -281,7 +281,7 @@ public class CaseModule extends Module
                 if (label.indexOf("*") != -1) {
 		    
 		    for (int k=labels.size()-1; k>=0; k--) {
-			String tmp = (String)labels.get(k);
+			String tmp = labels.get(k);
 			if (match(label, tmp)) {
 			    cases.remove(k);
 			    labels.remove(k);

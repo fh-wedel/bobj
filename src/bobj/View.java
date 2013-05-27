@@ -782,9 +782,9 @@ public class View {
 		if (subst != null) {
 		    Hashtable newSubst = new Hashtable();
 		    
-		    Enumeration enum = subst.keys();
-		    while (enum.hasMoreElements()) {
-			Variable var = (Variable)enum.nextElement();
+		    Enumeration enum_ = subst.keys();
+		    while (enum_.hasMoreElements()) {
+			Variable var = (Variable)enum_.nextElement();
 			Term trm = (Term)subst.get(var);
 			trm = getImage(sig, trm);
 						

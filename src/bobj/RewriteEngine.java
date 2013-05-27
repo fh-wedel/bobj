@@ -3776,10 +3776,10 @@ public class RewriteEngine {
 			Variable var = (Variable)ee.nextElement();
 			Term trm1 = (Term)ht.get(var);
 
-			Enumeration enum = mid.keys();
+			Enumeration enum_ = mid.keys();
 			Term trm2 = null;
-			while (enum.hasMoreElements()) {
-			    Variable vtmp = (Variable)enum.nextElement();
+			while (enum_.hasMoreElements()) {
+			    Variable vtmp = (Variable)enum_.nextElement();
 			    if (vtmp.equals(var)) {
 				trm2 = (Term)mid.get(vtmp);
 				break;

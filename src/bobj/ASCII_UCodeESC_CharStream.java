@@ -533,7 +533,6 @@ public final class ASCII_UCodeESC_CharStream
      if (inBuf != 0)
      {
         tmp = new char[2 * inBuf];
-        char c;
         for (int i = 0; i < inBuf; i++)
            if (buffer[i] < 256)
               tmp[cnt++] = (char)buffer[i];

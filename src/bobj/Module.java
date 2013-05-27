@@ -1816,9 +1816,9 @@ public class Module extends Signature implements Serializable {
 		//System.out.println("in annotate: "+modName);
                  		
 		Map map = new HashMap();
-		Enumeration enum = oldenv.keys();
-		while (enum.hasMoreElements()) {
-		    ModuleName tmpName = (ModuleName)enum.nextElement();
+		Enumeration enum_ = oldenv.keys();
+		while (enum_.hasMoreElements()) {
+		    ModuleName tmpName = (ModuleName)enum_.nextElement();
 		    Module tmpModule = (Module)oldenv.get(tmpName);
 		    map.put(tmpName, new Integer(tmpModule.type));
 		}
@@ -1922,18 +1922,18 @@ public class Module extends Signature implements Serializable {
 		    name2 = (ModuleName)mainName.subexps.get(0);
 
 		    newModule = null;
-		    enum = newenv.keys();
-		    while (enum.hasMoreElements()) {
-			ModuleName tmp = (ModuleName)enum.nextElement();
+		    enum_ = newenv.keys();
+		    while (enum_.hasMoreElements()) {
+			ModuleName tmp = (ModuleName)enum_.nextElement();
 			if (tmp.equals(name1)) {
 			    newModule = (Module)newenv.get(tmp);
 			    break;
 			}
 		    }
 			    		    
-		    enum = oldenv.keys();
-		    while (enum.hasMoreElements()) {
-			ModuleName tmp = (ModuleName)enum.nextElement();
+		    enum_ = oldenv.keys();
+		    while (enum_.hasMoreElements()) {
+			ModuleName tmp = (ModuleName)enum_.nextElement();
 			if (tmp.equals(name1)) {
 			    oldModule = (Module)oldenv.get(tmp);
 			    break;
@@ -1985,9 +1985,9 @@ public class Module extends Signature implements Serializable {
 				    
 		// create environment
 		map = new HashMap();
-		enum = oldenv.keys();
-		while (enum.hasMoreElements()) {
-		    ModuleName tmpName = (ModuleName)enum.nextElement();
+		enum_ = oldenv.keys();
+		while (enum_.hasMoreElements()) {
+		    ModuleName tmpName = (ModuleName)enum_.nextElement();
 		    Module tmpModule = (Module)oldenv.get(tmpName);
 		    map.put(tmpName, new Integer(tmpModule.type));
 		}
@@ -5261,9 +5261,9 @@ public class Module extends Signature implements Serializable {
 			} else {
 
 			    Hashtable t2v = new Hashtable();
-			    Enumeration enum = v2t.keys();
-			    while (enum.hasMoreElements()) {
-				Object key = enum.nextElement();
+			    Enumeration enum_ = v2t.keys();
+			    while (enum_.hasMoreElements()) {
+				Object key = enum_.nextElement();
 				t2v.put(v2t.get(key), key);
 			    }
 
@@ -5969,9 +5969,9 @@ public class Module extends Signature implements Serializable {
 		inc = true;
 	    }
 	    	    	    
-	    Enumeration enum = v2g.keys();
-	    while (enum.hasMoreElements()) {
-		Variable var = (Variable)enum.nextElement();
+	    Enumeration enum_ = v2g.keys();
+	    while (enum_.hasMoreElements()) {
+		Variable var = (Variable)enum_.nextElement();
 		Term term = (Term)v2g.get(var);
 		//msg += "    "+term+" for the variable "+var.name+"\n";
 
@@ -6345,9 +6345,9 @@ public class Module extends Signature implements Serializable {
     private Hashtable groundize(Hashtable table) {
 
 	ArrayList vars = new ArrayList();
-	Enumeration enum = table.keys();
-	while (enum.hasMoreElements()) {
-	    Variable var = (Variable)enum.nextElement();
+	Enumeration enum_ = table.keys();
+	while (enum_.hasMoreElements()) {
+	    Variable var = (Variable)enum_.nextElement();
 	    Term term = (Term)table.get(var);
 
 	    Variable[] vs = term.getVariables();
@@ -6393,9 +6393,9 @@ public class Module extends Signature implements Serializable {
             } catch (Exception e) {}
         }
 
-	enum = table.keys();
-	while (enum.hasMoreElements()) {
-	    Variable var = (Variable)enum.nextElement();
+	enum_ = table.keys();
+	while (enum_.hasMoreElements()) {
+	    Variable var = (Variable)enum_.nextElement();
 	    Term term = (Term)table.get(var);
 	    term = term.subst(result, this);
 	    table.put(var, term);
@@ -6477,10 +6477,10 @@ public class Module extends Signature implements Serializable {
 		Operation op = term.operation;
 		if (op.isConstant()) {
 		    
-		    Enumeration enum = table.keys();
+		    Enumeration enum_ = table.keys();
 		    Variable var = null;
-		    while (enum.hasMoreElements()) {
-			Term tm = (Term)enum.nextElement();
+		    while (enum_.hasMoreElements()) {
+			Term tm = (Term)enum_.nextElement();
 			Operation tmp = tm.operation;
 			if (tmp.name.equals(op.name)) {
 			    var = (Variable)table.get(tm);

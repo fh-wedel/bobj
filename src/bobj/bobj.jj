@@ -94,9 +94,9 @@ public class BOBJ {
 
 	Map map = new HashMap();
 
-	Enumeration enum = modPool.keys();
-	while (enum.hasMoreElements()) {
-	    ModuleName modName = (ModuleName)enum.nextElement();
+	Enumeration enum_ = modPool.keys();
+	while (enum_.hasMoreElements()) {
+	    ModuleName modName = (ModuleName)enum_.nextElement();
 	    Module module = (Module)modPool.get(modName);
 	    map.put(modName, new Integer(module.type));
 	}
@@ -145,9 +145,9 @@ public class BOBJ {
 
 
     private void saveModule(Module module) {
-	Enumeration enum = modPool.keys();
-	while (enum.hasMoreElements()) {
-	    ModuleName modName = (ModuleName)enum.nextElement();
+	Enumeration enum_ = modPool.keys();
+	while (enum_.hasMoreElements()) {
+	    ModuleName modName = (ModuleName)enum_.nextElement();
 	    if (modName.equals(module.getModuleName())) {
 	        modPool.remove(modName);
 	    }
@@ -158,9 +158,9 @@ public class BOBJ {
 
 
     private boolean containsModule(ModuleName modName) {
-	Enumeration enum = modPool.keys();
-	while (enum.hasMoreElements()) {
-	    ModuleName tmp = (ModuleName)enum.nextElement();
+	Enumeration enum_ = modPool.keys();
+	while (enum_.hasMoreElements()) {
+	    ModuleName tmp = (ModuleName)enum_.nextElement();
 	    if (modName.equals(tmp)) {
 		return true;
 	    }
@@ -184,9 +184,9 @@ public class BOBJ {
              ModuleName modName = new ModuleName(name);
 
 	     module = null;
-             Enumeration enum = modPool.keys();
-             while (enum.hasMoreElements()) {
-	         ModuleName tmp = (ModuleName)enum.nextElement();
+             Enumeration enum_ = modPool.keys();
+             while (enum_.hasMoreElements()) {
+	         ModuleName tmp = (ModuleName)enum_.nextElement();
                  if (tmp.equals(modName)) {
                      module = (Module)modPool.get(tmp);
 	             module = (Module)module.clone();
@@ -868,17 +868,17 @@ void Command() throws IOException :
           }
 
           // copy environment from the new parser
-          Enumeration enum = bobj.modPool.keys();
-          while (enum.hasMoreElements()) {
-              ModuleName modName = (ModuleName)enum.nextElement();
+          Enumeration enum_ = bobj.modPool.keys();
+          while (enum_.hasMoreElements()) {
+              ModuleName modName = (ModuleName)enum_.nextElement();
               module = (Module)bobj.modPool.get(modName);
               //modPool.put(modName, module);
 	      saveModule(module);
           }
 
-          enum = bobj.viewPool.keys();
-	  while (enum.hasMoreElements()) {
-              String key = (String)enum.nextElement();
+          enum_ = bobj.viewPool.keys();
+	  while (enum_.hasMoreElements()) {
+              String key = (String)enum_.nextElement();
               view = (View)bobj.viewPool.get(key);
               viewPool.put(key, view);
           }
@@ -4342,9 +4342,9 @@ Module ModExpTerm(Module mod) :
                  ModuleName modName = new ModuleName(name);
 
 	         module = null;
-                 Enumeration enum = modPool.keys();
-                 while (enum.hasMoreElements()) {
-	            ModuleName tmp = (ModuleName)enum.nextElement();
+                 Enumeration enum_ = modPool.keys();
+                 while (enum_.hasMoreElements()) {
+	            ModuleName tmp = (ModuleName)enum_.nextElement();
                     if (tmp.equals(modName)) {
                         module = (Module)modPool.get(tmp);
 	                module = (Module)module.clone();
@@ -6386,9 +6386,9 @@ void VarImport(Module module) :
 
                 ModuleName modName = new ModuleName(name);
 
-                Enumeration enum = modPool.keys();
-                while (enum.hasMoreElements()) {
-	            ModuleName key = (ModuleName)enum.nextElement();
+                Enumeration enum_ = modPool.keys();
+                while (enum_.hasMoreElements()) {
+	            ModuleName key = (ModuleName)enum_.nextElement();
                  
                     if (key.equals(modName)) {
                         tmp = (Module)modPool.get(key);
