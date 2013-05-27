@@ -22,3 +22,15 @@ most prominent members are [OBJ3](http://cseweb.ucsd.edu/~goguen/sys/obj.html#OB
 and [BOBJ](http://cseweb.ucsd.edu/~goguen/sys/obj.html#BOBJ). 
 
 Please see the BOBJ [README](readme.html) file for more details.
+
+
+Build instructions:
+-------------------
+
+Compile BOBJ:
+
+    mvn clean package
+
+Run BOBJ:
+
+    java -jar target/bobj-0.9.jar

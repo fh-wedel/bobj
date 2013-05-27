@@ -1,2 +1,2 @@
 
-java -jar %BOBJ_HOME%\bobj.jar 
+java -jar %BOBJ_HOME%\bobj-0.9.jar 
