@@ -13,7 +13,7 @@
         "ghcr.io/devcontainers-contrib/features/ant-sdkman:2": {}
       },
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "echo \"export BOBJ_HOME=/workspaces/bobj/target\" >> /root/.bashrc",
+    "postCreateCommand": "echo \"export BOBJ_HOME=/workspaces/bobj/target\" >> /root/.bashrc && code --install-extension /workspaces/bobj/.vscode/extensions/bobj/bobj-0.1.6.vsix",
 
     "customizations": {
         "vscode": {
@@ -26,7 +26,19 @@
             "terminal.integrated.shell.linux": "/bin/bash",
             "git.enabled": true,
             "git.autofetch": true,
-            "git.confirmSync": false
+            "git.confirmSync": false,
+            "redhat.telemetry.enabled": false,
+            "editor.tokenColorCustomizations": {
+                "textMateRules": [
+                    {
+                        "scope": "keyword.operator.bobj",
+                        "settings": {
+                            "foreground": "#9090FF"
+                        }
+                    }
+                ]
+            },
+            "workbench.colorTheme": "Monokai"
         }
     }
 }
