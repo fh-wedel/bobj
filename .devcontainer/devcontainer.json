@@ -13,8 +13,7 @@
         "ghcr.io/devcontainers-contrib/features/ant-sdkman:2": {}
       },
     "postCreateCommand": "echo \"export BOBJ_HOME=/workspaces/bobj/target\" >> /root/.bashrc",
-    "postAttachCommand": [ "code", "--install-extension", "/root//bobj-0.1.6.vsix" ],
-
+    
     "customizations": {
         "vscode": {
             "extensions": [

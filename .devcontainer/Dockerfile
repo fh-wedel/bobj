@@ -15,7 +15,12 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
+
+# Fetch and install VS Code BOBJ extension
 RUN curl -L -o /root/bobj-0.1.6.vsix https://github.com/fh-wedel/bobj/raw/codespace/.vscode/extensions/bobj/bobj-0.1.6.vsix
+RUN mkdir -p /root/.vscode-remote/extensions/ulrich_hoffmann.bobj-0.1.6 
+WORKDIR /root/.vscode-remote/extensions/ulrich_hoffmann.bobj-0.1.6
+RUN unzip /root/bobj-0.1.6.vsix && mv extension.vsixmanifest .vsixmanifest && mv extension/* . && rm -rf "./[Content_Types].xml" extension
 
 # Set the default shell to bash instead of sh
 ENV SHELL /bin/bash
