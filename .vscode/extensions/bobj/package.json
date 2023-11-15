@@ -1,18 +1,19 @@
 {
     "name": "bobj",
-    "version": "0.1.0",
+    "version": "0.1.6",
     "engines": {
         "vscode": ">=0.9.0-pre.1"
     },
-    "publisher": "Ulrich Hoffmann",
+    "publisher": "Ulrich_Hoffmann",
+    "repository": "https://github.com/fh-wedel/bobj",
     "contributes": {
         "languages": [{
             "id": "bobj",
-            "aliases": ["Bobj", "BOBJ"],
+            "aliases": ["BOBJ"],
             "extensions": [".bob",".obj"]
         }],
         "grammars": [{
-            "language": "BOBJ",
+            "language": "bobj",
             "scopeName": "source.bob",
             "path": "./syntaxes/bobj.tmLanguage.json"
         }]

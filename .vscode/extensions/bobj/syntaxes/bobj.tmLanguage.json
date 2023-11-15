@@ -1,6 +1,6 @@
 {
   "fileTypes": [
-    "bob"
+    "bob", "obj"
   ],
   "foldingStartMarker": "/\\*\\*|\\{\\s*$",
   "foldingStopMarker": "\\*\\*/|^\\s*\\}",
