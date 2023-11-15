@@ -13,7 +13,7 @@
         "ghcr.io/devcontainers-contrib/features/ant-sdkman:2": {}
       },
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "echo \"This file was added by the postCreateCommand.\" > TEMP.md",
+    "postCreateCommand": "echo \"export BOBJ_HOME=/workspaces/bobj/target\" >> /root/.bashrc",
 
     "customizations": {
         "vscode": {
