@@ -3,10 +3,12 @@ FROM debian:bullseye-slim
 # Avoid prompts from apt.
 ENV DEBIAN_FRONTEND=noninteractive
 
-# This sets up a basic environment and installs Gforth.
+# This sets up a basic environment.
+
 RUN apt-get update && apt-get install -y \
     git \
-    default-jdk maven \
+    rlwrap \
+    # for reqbuilding also install  default-jdk maven \
     # You can include other necessary tools here, depending on your development needs.
     && apt-get autoremove -y \
     && apt-get clean -y \
