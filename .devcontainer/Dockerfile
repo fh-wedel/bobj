@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl https://github.com/fh-wedel/bobj/raw/codespace/.vscode/extensions/bobj/bobj-0.1.6.vsix >/root/bobj-0.1.6.vsix
+RUN curl -L -o /root/bobj-0.1.6.vsix https://github.com/fh-wedel/bobj/raw/codespace/.vscode/extensions/bobj/bobj-0.1.6.vsix
 
 # Set the default shell to bash instead of sh
 ENV SHELL /bin/bash
