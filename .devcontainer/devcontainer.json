@@ -12,9 +12,7 @@
         },
         "ghcr.io/devcontainers-contrib/features/ant-sdkman:2": {}
       },
-    // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "echo \"export BOBJ_HOME=/workspaces/bobj/target\" >> /root/.bashrc",
-    "postAttachCommand": "/workspaces/bobj/.devcontainer/setup.sh >>/root/setup.log",
+    "postStartCommand": "echo \"export BOBJ_HOME=/workspaces/bobj/target\" >> /root/.bashrc && code --install-extension /root//bobj-0.1.6.vsix",
 
     "customizations": {
         "vscode": {
