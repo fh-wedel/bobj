@@ -14,7 +14,7 @@
         "grammars": [{
             "language": "BOBJ",
             "scopeName": "source.bob",
-            "path": "./syntaxes/bobj.tmLanguage"
+            "path": "./syntaxes/bobj.tmLanguage.json"
         }]
     }
 }

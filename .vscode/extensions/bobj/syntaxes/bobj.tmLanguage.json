@@ -1,0 +1,43 @@
+{
+  "fileTypes": [
+    "bob"
+  ],
+  "foldingStartMarker": "/\\*\\*|\\{\\s*$",
+  "foldingStopMarker": "\\*\\*/|^\\s*\\}",
+  "keyEquivalent": "^~F",
+  "name": "BOBJ",
+  "patterns": [
+    {
+      "match": "(?i:(?<=^|\\s)(:|\\.|->|==|=/=|::|=|<)(?=\\s))",
+      "name": "keyword.operator.bobj"
+    },
+    {
+      "match": "[-+]?[0-9]+",
+      "name": "constant.numeric.bobj"
+    },
+    {
+      "comment": "line comments",
+      "match": "(?<=^|\\s)(\\*\\*\\* .*$)",
+      "name": "comment.line.bobj"
+    },
+    {
+      "comment": "talking comments",
+      "match": "(?<=^|\\s)(\\*\\*\\*\\> .*$)",
+      "name": "comment.line.talking.bobj"
+    },
+    {
+      "match": "(?<=^|\\s)(obj|endo|sort|sorts|eq|ceq|cq|if|var|vars|op|ops|using|protecting|extending|subsort|subsorts|is|from|to|view|endv|make|endm|th|endth|vars-of|open|openr|close|start|apply|mask|at|\\[rinv\\]|\\[rid\\]|end|bth|pr|eof|dth|dfn|\\[ass\\]|\\[and\\]|\\[or\\]|\\[imp\\]|\\[not\\]|\\[all\\]|\\[modp\\]|\\[contd\\]|\\[lemma\\]|\\[astr\\]|\\[lnv\\]|\\[inj\\]|call-that|let|within|of)(?=\\s)",
+      "name": "keyword.bobj"
+    },
+    {
+      "match": "(?<=^|\\s)(?i:(red|reduce|parse|in|cred|set))(?=\\s)",
+      "name": "keyword.other.bobj"
+    },
+    {
+      "match": "\\b[A-Z][A-Z0-9-]*s?'*\\b",
+      "name": "variable.language.bobj"
+    }
+  ],
+  "scopeName": "source.bob",
+  "uuid": "0AAA4CFD-D621-4B33-BB76-EFD9EDE64E84"
+}
