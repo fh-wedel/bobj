@@ -13,7 +13,7 @@
         "ghcr.io/devcontainers-contrib/features/ant-sdkman:2": {}
       },
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "/workspaces/bobj/.devcontainer/setup.sh",
+    "postCreateCommand": "/workspaces/bobj/.devcontainer/setup.sh >setup.log",
 
     "customizations": {
         "vscode": {
