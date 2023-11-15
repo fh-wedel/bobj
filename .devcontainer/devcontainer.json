@@ -27,7 +27,7 @@
                 "git.autofetch": true,
                 "git.confirmSync": false,
                 "redhat.telemetry.enabled": false,
-                "workbench.colorTheme": "Monokai Dimmed",
+                "workbench.colorTheme": "Visual Studio Dark",
                 "editor.tokenColorCustomizations": {
                     "textMateRules": [
                         {
