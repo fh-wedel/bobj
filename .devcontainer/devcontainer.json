@@ -14,7 +14,7 @@
       },
     // Use 'postCreateCommand' to run commands after the container is created.
     "postCreateCommand": "echo \"export BOBJ_HOME=/workspaces/bobj/target\" >> /root/.bashrc",
-    "postStartCommand": "/workspaces/bobj/.devcontainer/setup.sh >>/root/setup.log",
+    "postAttachCommand": "/workspaces/bobj/.devcontainer/setup.sh >>/root/setup.log",
 
     "customizations": {
         "vscode": {
