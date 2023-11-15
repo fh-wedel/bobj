@@ -1,0 +1,32 @@
+{
+    "name": "BOBJ development environment",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+
+    "features": {
+        "ghcr.io/devcontainers/features/java:1": {
+          "version": "none",
+          "installMaven": "true",
+          "installGradle": "false"
+        },
+        "ghcr.io/devcontainers-contrib/features/ant-sdkman:2": {}
+      },
+    // Use 'postCreateCommand' to run commands after the container is created.
+    "postCreateCommand": "echo \"This file was added by the postCreateCommand.\" > TEMP.md",
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "streetsidesoftware.code-spell-checker",
+                "vscjava.vscode-java-pack"
+            ]
+        },
+        "settings": { 
+            "terminal.integrated.shell.linux": "/bin/bash",
+            "git.enabled": true,
+            "git.autofetch": true,
+            "git.confirmSync": false
+        }
+    }
+}
