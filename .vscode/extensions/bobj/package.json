@@ -1,0 +1,20 @@
+{
+    "name": "bobj",
+    "version": "0.1.0",
+    "engines": {
+        "vscode": ">=0.9.0-pre.1"
+    },
+    "publisher": "Ulrich Hoffmann",
+    "contributes": {
+        "languages": [{
+            "id": "bobj",
+            "aliases": ["Bobj", "BOBJ"],
+            "extensions": [".bob",".obj"]
+        }],
+        "grammars": [{
+            "language": "BOBJ",
+            "scopeName": "source.bobj",
+            "path": "./syntaxes/bobj.tmLanguage"
+        }]
+    }
+}
