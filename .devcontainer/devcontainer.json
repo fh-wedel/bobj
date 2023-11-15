@@ -13,32 +13,32 @@
         "ghcr.io/devcontainers-contrib/features/ant-sdkman:2": {}
       },
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "echo \"export BOBJ_HOME=/workspaces/bobj/target\" >> /root/.bashrc && code --install-extension /workspaces/bobj/.vscode/extensions/bobj/bobj-0.1.6.vsix",
+    "postCreateCommand": "/workspaces/bobj/.devcontainer/setup.sh",
 
     "customizations": {
         "vscode": {
             "extensions": [
                 // "streetsidesoftware.code-spell-checker",
                 "vscjava.vscode-java-pack"
-            ]
-        },
-        "settings": { 
-            "terminal.integrated.shell.linux": "/bin/bash",
-            "git.enabled": true,
-            "git.autofetch": true,
-            "git.confirmSync": false,
-            "redhat.telemetry.enabled": false,
-            "editor.tokenColorCustomizations": {
-                "textMateRules": [
-                    {
-                        "scope": "keyword.operator.bobj",
-                        "settings": {
-                            "foreground": "#9090FF"
+            ],
+            "settings": { 
+                "terminal.integrated.shell.linux": "/bin/bash",
+                "git.enabled": true,
+                "git.autofetch": true,
+                "git.confirmSync": false,
+                "redhat.telemetry.enabled": false,
+                "workbench.colorTheme": "Monokai Dimmed",
+                "editor.tokenColorCustomizations": {
+                    "textMateRules": [
+                        {
+                            "scope": "keyword.operator.bobj",
+                            "settings": {
+                                "foreground": "#9090FF"
+                            }
                         }
-                    }
-                ]
-            },
-            "workbench.colorTheme": "Monokai"
+                    ]
+                }
+            }
         }
     }
 }
